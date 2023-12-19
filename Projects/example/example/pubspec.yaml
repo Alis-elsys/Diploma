@@ -23,6 +23,9 @@ dependencies:
   universal_io: ^2.2.2
   json_annotation: ^4.8.1
   shared_preferences: ^2.2.0
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.3.0
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:

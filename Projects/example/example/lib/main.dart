@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/home_page.dart';
+import 'package:walletconnect_flutter_dapp/start_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: StringConstants.w3mPageTitleV3,
-        home: MyHomePage(
+        home: StartPage(
           swapTheme: () => _swapTheme(),
           changeTheme: () => _changeTheme(),
         ),
