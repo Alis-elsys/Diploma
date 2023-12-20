@@ -198,3 +198,9 @@ class _NavBarWidgetState extends State<NavBarWidget> {
   }
 }
 
+class CustomNavBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return NavBarWidget(); // Use the NavBarWidget directly
+  }
+}
