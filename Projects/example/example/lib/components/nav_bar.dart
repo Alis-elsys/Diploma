@@ -1,52 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
-//import 'dart:html';
-
-// import '/flutter_flow/flutter_flow_icon_button.dart';
-// import '/flutter_flow/flutter_flow_util.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-
-import 'nav_bar.dart';
-export 'nav_bar.dart';
 
 class NavBarModel extends NavBarWidget {
-  /// Initialization and dsposal methods.
-
   void initState(BuildContext context) {}
 
   void dispose() {}
 }
 
 class NavBarWidget extends StatefulWidget {
-  const NavBarWidget({Key? key}) : super(key: key);
+  const NavBarWidget({super.key});
 
   @override
   _NavBarWidgetState createState() => _NavBarWidgetState();
 }
 
 class _NavBarWidgetState extends State<NavBarWidget> {
-  // late NavBarModel _model;
-
-  // @override
-  // void setState(VoidCallbackAction callback) {
-  //   super.setState(callback);
-  //   _model.onUpdate();
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   _model = createModel(context, () => NavBarModel());
-  // }
-
-  // @override
-  // void dispose() {
-  //   _model.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,11 +33,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                 color: Colors.transparent,
                 elevation: 0,
                 shape: const RoundedRectangleBorder(
-                  borderRadius: 
-                    BorderRadius.vertical(
-                      bottom: Radius.circular(0),
-                      top: Radius.circular(20),
-                    ),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(0),
+                    top: Radius.circular(20),
+                  ),
                 ),
                 child: Container(
                   width: double.infinity,
@@ -84,11 +51,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                         spreadRadius: 0.1,
                       )
                     ],
-                    borderRadius: 
-                      BorderRadius.vertical(
-                        bottom: Radius.circular(0),
-                        top: Radius.circular(20),
-                      ),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(0),
+                      top: Radius.circular(20),
+                    ),
                   ),
                 ),
               ),
@@ -99,101 +65,69 @@ class _NavBarWidgetState extends State<NavBarWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              IconButton(
-                onPressed: (){ 
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const HomePageWidget())
-                  ); 
-                }, 
-                icon: const Icon(
-                  Icons.home_rounded,
-                  color: Color(0xFF9299A1),
-                  size: 24,
-                ),
-                style: ButtonStyle(                  
-                  fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                  shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 30)),
-                ),
-              ),
-              
-              IconButton(
-                onPressed:() {
-                  //TODO
-                },
-                icon: const Icon(
-                  Icons.chat_bubble_rounded,
-                  color: Color(0xFF9299A1),
-                  size: 24,
-                ),
-                style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                  shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 30)),
-                ),
-                ),
-               
-               Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                    child: IconButton(
-                      onPressed: (){
-                        //TODO
-                      }, 
-                      icon: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      style:ButtonStyle(
-                        fixedSize: MaterialStateProperty.all<Size>(const Size(60, 60)),
-                        backgroundColor: MaterialStateProperty.all<Color>(Color(0x4b39ef)),
-                        shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 25)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              IconButton(
-                onPressed: (){
-                  //TODO
-                },
-                icon: const Icon(
-                  Icons.person,
-                  color: Color(0xFF9299A1),
-                  size: 24,
-                ),
-                style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                  shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 30)),
-                ),
-              ),
-
-              IconButton(
-                onPressed: () {
-                  //TODO
-                }, 
-                icon: const Icon(
-                  Icons.settings_sharp,
-                  color: Color(0xFF9299A1),
-                  size: 24,
-                ),
-                style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                  shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 30)),
-                ),
-              ),
+              buildIconButton(Icons.home_rounded, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePageWidget()),
+                );
+              }),
+              buildIconButton(Icons.chat_bubble_rounded, () {
+                // TODO: Implement chat functionality
+              }),
+              buildAddButton(() {
+                // TODO: Implement add functionality
+              }),
+              buildIconButton(Icons.person, () {
+                // TODO: Implement user profile functionality
+              }),
+              buildIconButton(Icons.settings_sharp, () {
+                // TODO: Implement settings functionality
+              }),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  IconButton buildIconButton(IconData icon, VoidCallback onPressed) {
+    return IconButton(
+      onPressed: onPressed,
+      icon: Icon(
+        icon,
+        color: Color(0xFF9299A1),
+        size: 24,
+      ),
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 30)),
+      ),
+    );
+  }
+
+  Widget buildAddButton(VoidCallback onPressed) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+          child: IconButton(
+            onPressed: onPressed,
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 30,
+            ),
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(const Size(60, 60)),
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0x4b39ef)),
+              shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 25)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

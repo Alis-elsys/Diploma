@@ -26,6 +26,7 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_animate: ^4.3.0
   provider: ^6.1.1
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +42,8 @@ flutter:
 
   assets:
     - assets/abis/
+    - assets/abi.json
+
 
 flutter_launcher_icons:
   android: true
