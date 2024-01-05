@@ -7,6 +7,8 @@ contract Fluthereum {
     constructor() {
         balance = 0;
     }
+
+    function getBalance() view public returns(int) {return balance;}
     
     function deposit(int amount) public {
         balance += amount;

@@ -20,34 +20,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  bool _isDarkMode = false;
-  Web3ModalThemeData? _themeData;
-
   late Client httpClient;
   late Web3Client ethClient;
   TextEditingController controller = TextEditingController();
   // Ethereum address
-  final String myAddress = "0x279B9a39E68192db96B59Ca4a2b4C07777c2d535";
+  final String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
   // my "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
   // URL from Infura
   final String blockchainUrl = "HTTP://127.0.0.1:7545";
 
    //"https://rinkeby.infura.io/v3/4e577288c5b24f17a04beab17cf9c959";
     
-  String contractName = "Quickstart";
-  String privateKey = "0x9d9f5bfea7e3fa14cc3fb66e93fc9241517d568825544a3ae8a0166c22b4530b";
+  String contractName = "Fluthereum";
+  String privateKey = "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
   //  my  "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
   
-  int balance = 0;
+  var balance = 0;
   bool loading = false;
+  int amount = 0;
 
-  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    DeployedContract contract = await getContract();
-    ContractFunction function = contract.function(functionName);
-    List<dynamic> result = await ethClient.call(
-        contract: contract, function: function, params: args);
-    return result;
-  }
   
   Future<String> transaction(String functionName, List<dynamic> args) async {
     EthPrivateKey credential = EthPrivateKey.fromHex(privateKey);
@@ -69,9 +60,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0xd55B64d9b7816f2e2D9be07CbC52303A77B7163b";
+    String contractAddress = "0xA40aE19E33e7dF0bcA727cb1E10fe6Fc29C0b624";
 
-    DeployedContract contract = DeployedContract(
+    final contract = DeployedContract(
       ContractAbi.fromJson(abi, contractName),
       EthereumAddress.fromHex(contractAddress),
     );
@@ -79,19 +70,35 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return contract;
   }
 
-Future<void> getBalance() async {
-  try {
-    loading = true;
-    setState(() {});
-    List<dynamic> result = await query('balance', []);
-    balance = int.parse(result[0].toString());
-  } catch (error) {
-    print('Error in getBalance: $error');
-  } finally {
-    loading = false;
-    setState(() {});
+  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
+    final contract = await getContract();
+    final function = contract.function(functionName);
+    final result = await ethClient.call(
+        contract: contract, function: function, params: args);
+    return result;
   }
-}
+
+
+  Future<void> getBalance(String targetAddress) async {
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    List<dynamic> result = await query("getBalance", []);
+    balance = result[0];
+    setState(() {});
+    loading = true; 
+
+  
+  // try {
+  //   loading = true;
+  //   setState(() {});
+  //   List<dynamic> result = await query("getBalance", []);
+  //   balance = int.parse(result[0].toString());
+  // } catch (error) {
+  //   print('Error in getBalance: $error');
+  // } finally {
+  //   loading = false;
+  //   setState(() {});
+  // }
+  }
 
 
   Future<void> deposit(int amount) async {
@@ -113,16 +120,7 @@ Future<void> getBalance() async {
     super.initState();
     httpClient = Client();
     ethClient = Web3Client(blockchainUrl, httpClient);
-    getBalance();
-    // WidgetsBinding.instance.addObserver(this);
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   setState(() {
-    //     final platformDispatcher = View.of(context).platformDispatcher;
-    //     final platformBrightness = platformDispatcher.platformBrightness;
-    //     _isDarkMode = platformBrightness == Brightness.dark;
-    //   });
-    // });
-
+    getBalance(myAddress);
   }
 
   @override
@@ -130,19 +128,6 @@ Future<void> getBalance() async {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
-  @override
-  void didChangePlatformBrightness() {
-    if (mounted) {
-      setState(() {
-        final platformDispatcher = View.of(context).platformDispatcher;
-        final platformBrightness = platformDispatcher.platformBrightness;
-        _isDarkMode = platformBrightness == Brightness.dark;
-      });
-    }
-    super.didChangePlatformBrightness();
-  }
-
 
 @override
   Widget build(BuildContext context) {
@@ -163,7 +148,7 @@ Future<void> getBalance() async {
             loading
                 ? CircularProgressIndicator()
                 : Text(
-                    balance.toString(),
+                    "\$$balance",
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                   ),
             Container(
@@ -184,7 +169,7 @@ Future<void> getBalance() async {
                     color: Colors.blue,
                   ),
                   child: IconButton(
-                    onPressed: getBalance,
+                    onPressed: () => getBalance(myAddress),
                     icon: Icon(Icons.refresh),
                     color: Colors.white,
                   ),
@@ -220,49 +205,5 @@ Future<void> getBalance() async {
         ),
       ),
     );
-  }
-
-
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Web3ModalTheme(
-  //     isDarkMode: _isDarkMode,
-  //     themeData: _themeData,
-  //     child: MaterialApp(
-  //       debugShowCheckedModeBanner: false,
-  //       title: StringConstants.w3mPageTitleV3,
-  //       home: StartPage(
-  //         swapTheme: () => _swapTheme(),
-  //         changeTheme: () => _changeTheme(),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  void _swapTheme() {
-    setState(() {
-      _isDarkMode = !_isDarkMode;
-    });
-  }
-
-  void _changeTheme() {
-    setState(() {
-      _themeData = (_themeData == null)
-          ? Web3ModalThemeData(
-              lightColors: Web3ModalColors.lightMode.copyWith(
-                accent100: Colors.red,
-                background100: const Color.fromARGB(255, 187, 234, 255),
-                background125: const Color.fromARGB(255, 187, 234, 255),
-              ),
-              darkColors: Web3ModalColors.darkMode.copyWith(
-                accent100: Colors.orange,
-                background100: const Color.fromARGB(255, 36, 0, 120),
-                background125: const Color.fromARGB(255, 36, 0, 120),
-              ),
-              radiuses: Web3ModalRadiuses.circular,
-            )
-          : null;
-    });
   }
 }
