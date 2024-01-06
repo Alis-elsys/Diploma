@@ -22,7 +22,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late Client httpClient;
   late Web3Client ethClient;
-  TextEditingController controller = TextEditingController();
+  TextEditingController controllerAmount = TextEditingController();
+  TextEditingController controllerTitle = TextEditingController();
   // Ethereum address
   final String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
   // my "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
@@ -35,9 +36,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String privateKey = "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
   //  my  "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
   
-  var balance = 0;
+  int balance = 0;
+  String title = "";
   bool loading = false;
-  int amount = 0;
+  //int amount = 0;
 
   
   Future<String> transaction(String functionName, List<dynamic> args) async {
@@ -60,7 +62,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0xA40aE19E33e7dF0bcA727cb1E10fe6Fc29C0b624";
+    String contractAddress = "0x8daA5912cea8B79818C9176b7Ee0773a9820f2Ff";
 
     final contract = DeployedContract(
       ContractAbi.fromJson(abi, contractName),
@@ -80,12 +82,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
 
   Future<void> getBalance(String targetAddress) async {
-    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    //EthereumAddress address1 = EthereumAddress.fromHex(targetAddress);
     List<dynamic> result = await query("getBalance", []);
     balance = result[0];
     setState(() {});
     loading = true; 
-
   
   // try {
   //   loading = true;
@@ -100,6 +101,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // }
   }
 
+  Future<void> getTitle(String targetAddress) async {
+    List<dynamic> result = await query("getTitle", []);
+    title = result[0];
+    setState(() {});
+  }
+
+  Future<void> refreshData(String targetAddress) async {
+      getBalance(targetAddress);
+      getTitle(targetAddress);
+  }
 
   Future<void> deposit(int amount) async {
     BigInt parsedAmount = BigInt.from(amount);
@@ -121,6 +132,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     httpClient = Client();
     ethClient = Web3Client(blockchainUrl, httpClient);
     getBalance(myAddress);
+    getTitle(myAddress);
   }
 
   @override
@@ -139,10 +151,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         child: Column(
           children: [
             SizedBox(
-              height: 30,
+              height: 40,
             ),
             Text(
-              "Balance",
+              "$title",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
             loading
@@ -154,9 +166,24 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             Container(
               width: MediaQuery.of(context).size.width * 0.6,
               child: TextField(
-                controller: controller,
+                controller: controllerAmount,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(label: Text('amount')),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  label: Text('Amount')
+                ),
+              ),
+            ),
+            Spacer(),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: TextField(
+                controller: controllerTitle,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  label: Text('Title')
+                ),
               ),
             ),
             Spacer(),
@@ -169,7 +196,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     color: Colors.blue,
                   ),
                   child: IconButton(
-                    onPressed: () => getBalance(myAddress),
+                    onPressed: () => refreshData(myAddress),
                     icon: Icon(Icons.refresh),
                     color: Colors.white,
                   ),
@@ -180,7 +207,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     color: Colors.green,
                   ),
                   child: IconButton(
-                    onPressed: () => deposit(int.parse(controller.text)),
+                    onPressed: () => deposit(int.parse(controllerAmount.text)),
                     icon: Icon(Icons.upload),
                     color: Colors.white,
                   ),
@@ -191,7 +218,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     color: Colors.red,
                   ),
                   child: IconButton(
-                    onPressed: () => withdraw(int.parse(controller.text)),
+                    onPressed: () => withdraw(int.parse(controllerAmount.text)),
                     icon: Icon(Icons.download),
                     color: Colors.white,
                   ),
