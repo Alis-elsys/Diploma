@@ -15,6 +15,7 @@ Widget productCard({
     child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
             blurRadius: 2,
@@ -22,7 +23,6 @@ Widget productCard({
             offset: Offset(0, 1),
           ),
         ],
-        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -30,10 +30,7 @@ Widget productCard({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(12),
-              top: Radius.circular(0),
-            ),
+            borderRadius: BorderRadius.circular(16),
             child: Image.network(
               imageUrl,
               width:double.maxFinite,

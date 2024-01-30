@@ -16,6 +16,8 @@ class HomePageModel extends HomePageWidget {
   // Model for NavBar1 component.
   late NavBarModel navBarModel;
 
+  HomePageModel();
+
 
   void initState(BuildContext context) {
     // Initialize state of NavBar1 component.
