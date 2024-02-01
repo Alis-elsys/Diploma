@@ -135,9 +135,23 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     loading = true;
   }
 
+  Future<void> getNFT(int id) async {
+    List<dynamic> result = await query("getNFT", [BigInt.from(id)]);
+    nft = NFT.fromJson(result[0]);
+    setState(() {});
+    loading = true;
+  }
+
   Future<void> getLenght() async {
     List<dynamic> result = await query("getLength", []);
     length = int.parse(result[0].toString());
+    setState(() {});
+    loading = true;
+  }
+
+  Future<void> getCount(String targetAddress) async {
+    List<dynamic> result = await query("getCounter", []);
+    length = result[0];
     setState(() {});
     loading = true;
   }
@@ -169,9 +183,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     httpClient = Client();
     ethClient = Web3Client(blockchainUrl, httpClient);
     //fetch data from nft.dart and put it in allNFTs
-    allNFTs = fetchNFTData() as List<NFT>;
-    getLenght();
+    getCount(myAddress);     
     getNFTlist();
+    getNFT(0);
     getBalance(myAddress);
     getTitle(myAddress);
     _model.initState(context);
@@ -310,7 +324,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ],
             ),
             Text(
-              '$length',
+              "$length",
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 color: Color(0xFF101213),
@@ -336,33 +350,48 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         price: "\$${allNFTs[index].price.toString()}",
                       ),
                     ),
-                  ],
+                  ]
                 ),
               ),
             ),
+            Text(
+              '${nft.tokenId}',
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                color: Color(0xFF101213),
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            productCard(
+              imageUrl: nft.imageUrl,
+              productName: nft.name,
+              price: "\$${nft.price.toString()}",
+            ),
 
-            // Expanded(
-            //   child: Padding(
-            //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            //     child: GridView.builder(
-            //       itemCount: nfts.length,
-            //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //         crossAxisCount: 2,
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                child: GridView.builder(
+                  itemCount: nfts.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
 
-            //       ),
-            //       itemBuilder: (context, index) => productCard(
-            //         imageUrl: nfts[index].imageUrl,
-            //         productName: nfts[index].name,
-            //         price: "\$$nfts[index].price.toString()",
-            //       ),
-            //     )
-            //   )
-            // ),
-
-            //NavBarWidget(),
+                  ),
+                  itemBuilder: (context, index) => productCard(
+                    imageUrl: nfts[index].imageUrl,
+                    productName: nfts[index].name,
+                    price: "\$$nfts[index].price.toString()",
+                  ),
+                )
+              )
+            ),
+         
+          
           ],
         ),
       ),
+      bottomNavigationBar: CustomNavBar()
     );
   }
 }
