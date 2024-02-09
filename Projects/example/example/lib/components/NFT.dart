@@ -6,6 +6,8 @@ import '../models/home_page_model.dart';
 import '../home_page.dart';
 
 
+final HomePageModel _model = HomePageModel();
+
 class NFT {
   final BigInt tokenId;
   final double price;
@@ -75,66 +77,86 @@ class NFT {
 
 
 
-// // Simulated data for demonstration purposes
-//   List<NFT> nfts = [
-//     NFT(
-//       tokenId: 1,
-//       name: 'NFT 1',
-//       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 2,
-//       name: 'NFT 2',
-//       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 3,
-//       name: 'NFT 3',
-//       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 4,
-//       name: 'NFT 4',
-//       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 5,
-//       name: 'NFT 5',
-//       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 6,
-//       name: 'NFT 6',
-//       imageUrl: 'https://picsum.photos/250?image=14',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 7,
-//       name: 'NFT 7',
-//       imageUrl: 'https://picsum.photos/250?image=15',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 8,
-//       name: 'NFT 8',
-//       imageUrl: 'https://picsum.photos/250?image=16',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 9,
-//       name: 'NFT 9',
-//       imageUrl: 'https://picsum.photos/250?image=17',
-//       price: 100
-//     ),
-//     NFT(
-//       tokenId: 10,
-//       name: 'NFT 10',
-//       imageUrl: 'https://picsum.photos/250?image=18',
-//       price: 100
-//     )
-//   ];
+// Simulated data for demonstration purposes
+  List<NFT> nfts = [
+    NFT(
+      tokenId: 1 as BigInt,
+      name: 'NFT 1',
+      description: 'This is a description for NFT 1',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 2 as BigInt,
+      name: 'NFT 2',
+      description: 'This is a description for NFT 2',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 3 as BigInt,
+      name: 'NFT 3',
+      description: 'This is a description for NFT 3',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 4 as BigInt,
+      name: 'NFT 4',
+      description: 'This is a description for NFT 4',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 5 as BigInt,
+      name: 'NFT 5',
+      description: 'This is a description for NFT 5',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8d2GaM9vp206kfNlnBUKdLFUNQMpy4SmWZxYssaNy1MVWtaJp9P4AJ9FngBRMQiWfj2c&usqp=CAU',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 6 as BigInt,
+      name: 'NFT 6',
+      description: 'This is a description for NFT 6',
+      imageUrl: 'https://picsum.photos/250?image=14',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 7 as BigInt,
+      name: 'NFT 7',
+      description: 'This is a description for NFT 7',
+      imageUrl: 'https://picsum.photos/250?image=15',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 8 as BigInt,
+      name: 'NFT 8',
+      description: 'This is a description for NFT 8',
+      imageUrl: 'https://picsum.photos/250?image=16',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 9 as BigInt,
+      name: 'NFT 9',
+      description: 'This is a description for NFT 9',
+      imageUrl: 'https://picsum.photos/250?image=17',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    ),
+    NFT(
+      tokenId: 10 as BigInt,
+      name: 'NFT 10',
+      description: 'This is a description for NFT 10',
+      imageUrl: 'https://picsum.photos/250?image=18',
+      price: 100,
+      owner: EthereumAddress.fromHex('${_model.myAddress}')
+    )
+  ];
