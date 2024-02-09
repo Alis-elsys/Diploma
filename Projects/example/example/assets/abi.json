@@ -3,50 +3,6 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "buyNFT",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "deleteNFT",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "initialOwner",
 				"type": "address"
 			}
@@ -160,6 +116,40 @@
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "imageUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"name": "mint",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
@@ -230,6 +220,24 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -249,6 +257,32 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "buyNFT",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "deleteNFT",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -260,35 +294,6 @@
 		],
 		"name": "MetadataUpdate",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "imageUrl",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			}
-		],
-		"name": "mint",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -409,6 +414,12 @@
 			{
 				"indexed": false,
 				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
 				"name": "imageUrl",
 				"type": "string"
 			},
@@ -441,6 +452,12 @@
 				"indexed": false,
 				"internalType": "string",
 				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "description",
 				"type": "string"
 			},
 			{
@@ -541,9 +558,9 @@
 				"type": "string"
 			},
 			{
-				"internalType": "address payable",
-				"name": "NFTowner",
-				"type": "address"
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -554,6 +571,11 @@
 				"internalType": "uint256",
 				"name": "price",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address payable",
+				"name": "NFTowner",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -595,9 +617,9 @@
 						"type": "string"
 					},
 					{
-						"internalType": "address payable",
-						"name": "NFTowner",
-						"type": "address"
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					},
 					{
 						"internalType": "string",
@@ -608,6 +630,11 @@
 						"internalType": "uint256",
 						"name": "price",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address payable",
+						"name": "NFTowner",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Shop.NFT[]",
@@ -639,6 +666,51 @@
 	},
 	{
 		"inputs": [],
+		"name": "getCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getFullLenght",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getIds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
 		"name": "getLenght",
 		"outputs": [
 			{
@@ -667,9 +739,9 @@
 						"type": "string"
 					},
 					{
-						"internalType": "address payable",
-						"name": "NFTowner",
-						"type": "address"
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					},
 					{
 						"internalType": "string",
@@ -680,6 +752,11 @@
 						"internalType": "uint256",
 						"name": "price",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address payable",
+						"name": "NFTowner",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Shop.NFT[]",
@@ -713,9 +790,9 @@
 						"type": "string"
 					},
 					{
-						"internalType": "address payable",
-						"name": "NFTowner",
-						"type": "address"
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					},
 					{
 						"internalType": "string",
@@ -726,11 +803,29 @@
 						"internalType": "uint256",
 						"name": "price",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address payable",
+						"name": "NFTowner",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Shop.NFT",
 				"name": "",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTester",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
 			}
 		],
 		"stateMutability": "view",
@@ -786,9 +881,9 @@
 				"type": "string"
 			},
 			{
-				"internalType": "address payable",
-				"name": "NFTowner",
-				"type": "address"
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -799,6 +894,11 @@
 				"internalType": "uint256",
 				"name": "price",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address payable",
+				"name": "NFTowner",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -812,6 +912,32 @@
 				"internalType": "string",
 				"name": "",
 				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "NFTsCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "NFTsIds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -876,6 +1002,19 @@
 				"internalType": "string",
 				"name": "",
 				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tester",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
 			}
 		],
 		"stateMutability": "view",

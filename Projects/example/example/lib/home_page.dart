@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
-
+import 'dart:convert'; 
 import 'components/NFT.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
@@ -33,35 +33,38 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   late HomePageModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String name = '';
-  // String _url = "HTTP://127.0.0.1:7545";
-//String _wsUrl = "ws://127.0.0.1:7545/";
-
+ 
   late Client httpClient;
   late Web3Client ethClient;
+  late EthereumAddress address;
+  List<dynamic> data = [];
   TextEditingController controllerAmount = TextEditingController();
   TextEditingController controllerTitle = TextEditingController();
   // Ethereum address
-  final String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
-  // my "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
-  // URL from Infura
-  final String blockchainUrl =
-      "https://sepolia.infura.io/v3/7f0484b1a988417e9be1706dd241a9fd";
+  // final String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+  // // my "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+  // // URL from Infura
+  // final String blockchainUrl =
+  //     "https://sepolia.infura.io/v3/7f0484b1a988417e9be1706dd241a9fd";
 
   //"https://rinkeby.infura.io/v3/4e577288c5b24f17a04beab17cf9c959";
 
-  String contractName = "Fluthereum";
-  String privateKey =
-      "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
+  // String contractName = "Fluthereum";
+  // String privateKey =
+  //     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
   //  my  "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
 
   int balance = 0;
   String title = "";
-  int length = -1;
+  int tester = 0;
+  int length = 0;
   NFT nft = NFT(
-    tokenId: 0,
+    tokenId: BigInt.from(0),
     name: '',
+    description: '',
     imageUrl: '',
     price: 0,
+    owner: EthereumAddress.fromHex('0x0000000000000000000000000000000000000000')
   );
   /*maka a list of NFTs he struct is that struct NFT{
         uint256 id;
@@ -74,122 +77,96 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
 //make a struct or class for NFTs
 
-  List<NFT> allNFTs = [];
+List<NFT> allNFTs = [];
   bool loading = false;
   //int amount = 0;
 
-  Future<String> transaction(String functionName, List<dynamic> args) async {
-    EthPrivateKey credential = EthPrivateKey.fromHex(privateKey);
-    DeployedContract contract = await getContract();
-    ContractFunction function = contract.function(functionName);
-    dynamic result = await ethClient.sendTransaction(
-      credential,
-      Transaction.callContract(
-        contract: contract,
-        function: contract.function('constructor'),
-        parameters: args,
-      ),
-      fetchChainIdFromNetworkId: true,
-      chainId: null,
-    );
-
-    return result;
-  }
+  
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
     String contractAddress = "0x0C5186Ba7eCda919Db737946C4cfF9A5d5EF1786";
 
-    final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
+    final contract = DeployedContract(ContractAbi.fromJson(abi, _model.contractName),
         EthereumAddress.fromHex(contractAddress));
 
     return contract;
   }
 
   Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    final contract = await getContract();
+    final contract = await _model.getContract();
     final function = contract.function(functionName);
     final result = await ethClient.call(
         contract: contract, function: function, params: args);
     return result;
   }
-
-  Future<void> getBalance(String targetAddress) async {
-    List<dynamic> result = await query("getBalance", []);
-    balance = int.parse(result[0].toString());
-    setState(() {});
-    loading = true;
-  }
-
-  Future<void> getTitle(String targetAddress) async {
-    List<dynamic> result = await query("getTitle", []);
-    title = result[0];
-    setState(() {});
-    loading = true;
-  }
-
   Future<void> getNFTlist() async {
-    List<dynamic> result = await query("getMyNFTs", []);
-    allNFTs = result.map((e) => NFT.fromJson(e)).toList();
+    List<dynamic> result = await _model.query("getAllNFTs", []);
+
+    print(result);
+    _model.allNfts = result[0].map((e) => NFT.fromJsonList(e as List<dynamic>)).toList();
     setState(() {});
     loading = true;
   }
 
-  Future<void> getNFT(int id) async {
-    List<dynamic> result = await query("getNFT", [BigInt.from(id)]);
-    nft = NFT.fromJson(result[0]);
+  Future<void> getMyNFTlist() async {
+   _model.allNfts = _model.getAllNFTs() as List<NFT>;
     setState(() {});
     loading = true;
   }
 
-  Future<void> getLenght() async {
-    List<dynamic> result = await query("getLength", []);
+  // Future<void> getNFT(BigInt id) async {
+  //   List<dynamic> result = await _model.query("getNFT", [id]);
+  //   nft = NFT.fromJsonList(result);
+  //   setState(() {});
+  //   loading = true;
+  // }
+
+  Future<void> getCounter() async {
+    //give argument to getCounter the arg is string but it need to be address so it is converted to address
+      List<dynamic> args = [_model.myAddress];
+    List<dynamic> result = await _model.query("getLenght", [EthereumAddress.fromHex(_model.myAddress)]);
     length = int.parse(result[0].toString());
     setState(() {});
     loading = true;
   }
 
-  Future<void> getCount(String targetAddress) async {
-    List<dynamic> result = await query("getCounter", []);
-    length = result[0];
-    setState(() {});
-    loading = true;
+  Future<void> getTester() async {
+    try{
+      List<dynamic> result = await _model.query("getTester", []);
+      tester = int.parse(result[0].toString());
+      setState(() {});
+      loading = true;
+    } catch (e) {
+      print('Error in getCount: $e');
+    } finally {
+      loading = false;
+    }
   }
 
   Future<void> refreshData(String targetAddress) async {
-    getBalance(targetAddress);
-    getTitle(targetAddress);
-    print("refreshed");
+    await getNFTlist();
+    //await getNFT(BigInt.zero);
+    await getCounter();
+    await getTester();
   }
 
-  Future<void> deposit(int amount) async {
-    BigInt parsedAmount = BigInt.from(amount);
-    var result = await transaction("deposit", [parsedAmount]);
-    print("deposited");
-    print(result);
-  }
-
-  Future<void> withdraw(int amount) async {
-    BigInt parsedAmount = BigInt.from(amount);
-    var result = await transaction("withdraw", [parsedAmount]);
-    print("withdraw done");
-    print(result);
-  }
 
   @override
   void initState() {
     super.initState();
     _model = HomePageModel();
-    httpClient = Client();
-    ethClient = Web3Client(blockchainUrl, httpClient);
-    //fetch data from nft.dart and put it in allNFTs
-    getCount(myAddress);     
-    getNFTlist();
-    getNFT(0);
-    getBalance(myAddress);
-    getTitle(myAddress);
     _model.initState(context);
-
+    _model.initializeContract();
+    ethClient = _model.getEthClient();
+    _model.initializeMyaddress();
+    //fetch data from nft.dart and put it in allNFTs
+    getTester();   
+    getNFTlist();
+    //allNFTs = getMyNFTlist() as List<NFT>;
+   // getNFT(BigInt.zero);
+    fetchData();
+    getCounter();  
   }
 
   // Future <void> getAllNFTs() async {
@@ -198,6 +175,20 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   //       function: ethClient.function("getAllNFTs"),
   //       params: []);
   // }
+
+  Future<void> fetchData() async {
+    final response = await get(Uri.parse(_model.blockchainUrl)); // Replace the URL with your API endpoint
+
+    if (response.statusCode == 200) {
+      // If the call to the server was successful, parse the JSON
+      setState(() {
+        data = jsonDecode(response.body); // Decode the JSON response
+      });
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load data');
+    }
+  }
 
   void nameF() {
     String name = 'name';
@@ -216,28 +207,25 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-      key: scaffoldKey,
+      //key: scaffoldKey,
       backgroundColor: Color(0xFff1F4F8),
       appBar: AppBar(
-        backgroundColor: Color(0xFFF1F4F8),
-        elevation: 10.0,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(22, 0, 0, 0),
-              child: Text(
-                'Home',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            // Add any additional widgets or actions here
-          ],
+        backgroundColor: Colors.indigoAccent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            //if there is a previous page go to it
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            //Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
       body: Padding(
@@ -323,8 +311,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
               ],
             ),
+            Text('address: ${_model.myAddress.toString()}'),
             Text(
-              "$length",
+              "tester $tester",
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                color: Color(0xFF101213),
+                fontSize: 30,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              "length  $length",
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 color: Color(0xFF101213),
@@ -332,56 +330,59 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: ListView(
-                  children: [
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: allNFTs.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemBuilder: (context, index) => productCard(
-                        imageUrl: allNFTs[index].imageUrl,
-                        productName: allNFTs[index].name,
-                        price: "\$${allNFTs[index].price.toString()}",
-                      ),
-                    ),
-                  ]
-                ),
-              ),
-            ),
-            Text(
-              '${nft.tokenId}',
-              style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                color: Color(0xFF101213),
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            productCard(
-              imageUrl: nft.imageUrl,
-              productName: nft.name,
-              price: "\$${nft.price.toString()}",
-            ),
+            // Expanded(
+            //   child: Padding(
+            //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            //     child: ListView(
+            //       children: [
+            //         GridView.builder(
+            //           shrinkWrap: true,
+            //           physics: NeverScrollableScrollPhysics(),
+            //           itemCount: allNFTs.length,
+            //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //             crossAxisCount: 2,
+            //           ),
+            //           itemBuilder: (context, index) => productCard(
+            //             imageUrl: allNFTs[index].imageUrl,
+            //             productName: allNFTs[index].name,
+            //             price: "\$${allNFTs[index].price.toString()}",
+            //           ),
+            //         ),
+            //       ]
+            //     ),
+            //   ),
+            // ),
+            // Text(
+            //   'token ids${nft.tokenId}',
+            //   style: TextStyle(
+            //     fontFamily: 'Plus Jakarta Sans',
+            //     color: Color(0xFF101213),
+            //     fontSize: 24,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
+            // productCard(
+            //   imageUrl: nft.imageUrl,
+            //   productName: nft.name,
+            //   price: "\$${nft.price.toString()}",
+            // ),
+            Text('_model.allNfts.length ${_model.allNfts.length}'),
+            Text('data.length ${data.length}'),
 
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: GridView.builder(
-                  itemCount: nfts.length,
+                  itemCount: _model.allNfts.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
 
                   ),
                   itemBuilder: (context, index) => productCard(
-                    imageUrl: nfts[index].imageUrl,
-                    productName: nfts[index].name,
-                    price: "\$$nfts[index].price.toString()",
+                    imageUrl: _model.allNfts[index].imageUrl,
+                    productName: _model.allNfts[index].name,
+                    price: "\$$_model.allNfts[index].price.toString()",
+                    id: _model.allNfts[index].tokenId,
                   ),
                 )
               )

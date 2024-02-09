@@ -8,41 +8,34 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Shop is Ownable, ERC721URIStorage {
     
     using Counters for Counters.Counter;
-    Counters.Counter private NFTsCounter;
-    Counters.Counter private NFTsIds; 
-    
+    Counters.Counter public NFTsCounter;
+    Counters.Counter public NFTsIds; 
+    int public tester;
     address private Glob_owner;
 
     struct NFT{
-        uint256 id;
+        uint256 id; //moje bi trqbva da promenq na float zaradi flutter constructiona
         string name;
-        address payable NFTowner;
+        string description;
         string imageUrl; 
         uint256 price;
-    }
-
-    struct User{
-        address UserAddress;
-        uint256 buyedNFTs;
-        uint256 SoldNFTs; 
-        uint256[] createdNFTs;
-        NFT[] myNFTs;
+        address payable NFTowner;
     }
 
     mapping(uint256 => NFT) public allNFTs;
     mapping(address => NFT[]) public  myNFTs;
-    mapping(address => mapping(uint256 => uint256)) public userBoughtCounts;
-    mapping(address => mapping(uint256 => uint256)) public userSoldCounts;
+    mapping(address => uint256) public userBoughtCounts;
+    mapping(address => uint256) public userSoldCounts;
 
 
-    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string imageUrl, uint price);
-    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string imageUrl, uint price);
+    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
+    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
 
     constructor(address initialOwner) ERC721("Shop", "SHOP") Ownable(initialOwner) {
         Glob_owner = initialOwner;
     }
 
-    function mint(string memory name, string memory imageUrl, uint price) external onlyOwner returns(uint256){
+    function mint(string memory name, string memory description, string memory imageUrl, uint price) external onlyOwner returns(uint256){
         
         uint256 tokenId = NFTsIds.current();
 
@@ -52,20 +45,21 @@ contract Shop is Ownable, ERC721URIStorage {
         NFT memory newNFT = NFT({
             id: tokenId,
             name: name,
-            NFTowner: payable(msg.sender),
+            description: description,
             imageUrl: imageUrl,
-            price: price
+            price: price,
+            NFTowner: payable(msg.sender)
         });        
         
         allNFTs[tokenId] = newNFT;
         myNFTs[msg.sender].push(newNFT);
 
         
-        emit TokenMinted(tokenId, payable(msg.sender), name, imageUrl, price);
+        emit TokenMinted(tokenId, payable(msg.sender), name, description, imageUrl, price);
 
         NFTsCounter.increment();
         NFTsIds.increment();
-       
+        tester++;
         return tokenId;
     }
 
@@ -74,12 +68,12 @@ contract Shop is Ownable, ERC721URIStorage {
         require(allNFTs[tokenId].NFTowner != msg.sender, "You are the owner of this NFT");
 
         payable(allNFTs[tokenId].NFTowner).transfer(msg.value);
-        userBoughtCounts[msg.sender][tokenId]++;
-        userSoldCounts[allNFTs[tokenId].NFTowner][tokenId]++;
+        userBoughtCounts[msg.sender]++;
+        userSoldCounts[allNFTs[tokenId].NFTowner]++;
         myNFTs[msg.sender].push(allNFTs[tokenId]);
         /// myNFTs[msg.sender] = allNFTs[tokenId];
 
-        emit TokenBought(tokenId, payable(msg.sender), allNFTs[tokenId].name, allNFTs[tokenId].imageUrl, allNFTs[tokenId].price);
+        emit TokenBought(tokenId, payable(msg.sender), allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].imageUrl, allNFTs[tokenId].price);
     }
 
     function deleteNFT(uint256 tokenId) external onlyOwner{
@@ -90,6 +84,7 @@ contract Shop is Ownable, ERC721URIStorage {
     }
 
     function getNFT(uint256 tokenId) public view returns(NFT memory){
+       // if(tokenId = allNFTs[tokenId].NFTowner == address(0)){        }
         return allNFTs[tokenId];
     }
 
@@ -105,8 +100,28 @@ contract Shop is Ownable, ERC721URIStorage {
         return myNFTs[msg.sender];
     }
 
-    function getLenght() public view returns (uint){
-        return myNFTs[msg.sender].length;
+    function getLenght(address sender) public view returns (uint){
+        return myNFTs[sender].length;
+    }
+
+    function getFullLenght() public view returns (uint){
+        NFT[] memory allNFTsArray = new NFT[](NFTsCounter.current());
+        for(uint256 i = 0; i < NFTsCounter.current(); i++){
+            allNFTsArray[i] = allNFTs[i];
+        }
+        return allNFTsArray.length;
+    }
+
+    function getCounter() public view returns (uint){
+        return NFTsCounter.current();
+    }
+
+    function getIds() public view returns (uint){
+        return NFTsIds.current();
+    }
+
+    function getTester() public view returns (int){
+        return tester;
     }
 
 }

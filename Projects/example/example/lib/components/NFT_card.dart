@@ -1,13 +1,17 @@
+//import 'dart:js';
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import '../models/home_page_model.dart';
+import '../info_page.dart';
 
-
-import '../components/nav_bar.dart';
- import 'package:flutter/material.dart';
+HomePageModel _model = HomePageModel();
 
 Widget productCard({
   required String imageUrl,
   required String productName,
   required String price,
+  required BigInt id, //podavah tova na functia ili nesho takova koqto she pokazva
   VoidCallback? onPressed,
 }) {
   return Padding(
@@ -67,7 +71,15 @@ Widget productCard({
                   ),
                 ),
                 TextButton(
-                  onPressed: onPressed,
+                  onPressed:(){
+                    _model.currentNftId = id as int;
+                    // Navigator.push(
+                    //   context, 
+                    //   MaterialPageRoute(
+                    //     builder: (context) => const InfoPageWidget(),
+                    //   ),
+                    //);
+                  },//dava stojnost na var ot modela s id-to na nft-to za da znae koe da pokaje
                   style: ButtonStyle(
                     backgroundColor:
                         const MaterialStatePropertyAll(Colors.transparent),
