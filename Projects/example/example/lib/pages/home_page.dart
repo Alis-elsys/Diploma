@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'dart:convert'; 
-import 'components/NFT.dart';
+import '../components/NFT.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/models/home_page_model.dart';
@@ -15,7 +15,7 @@ import 'package:flutter/services.dart';
 import '../components/nav_bar.dart';
 import '../components/NFT_card.dart';
 import 'package:flutter/scheduler.dart';
-import 'main.dart';
+import '../main.dart';
 import 'start_page.dart';
 import 'home_page.dart';
 export 'home_page.dart';
@@ -59,11 +59,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   int tester = 0;
   int length = 0;
   NFT nft = NFT(
-    tokenId: BigInt.from(0),
+    tokenId: BigInt.zero,
     name: '',
     description: '',
     imageUrl: '',
-    price: 0,
+    price: BigInt.zero,
     owner: EthereumAddress.fromHex('0x0000000000000000000000000000000000000000')
   );
   /*maka a list of NFTs he struct is that struct NFT{
@@ -115,17 +115,18 @@ List<NFT> allNFTs = [];
     loading = true;
   }
 
-  // Future<void> getNFT(BigInt id) async {
-  //   List<dynamic> result = await _model.query("getNFT", [id]);
-  //   nft = NFT.fromJsonList(result);
-  //   setState(() {});
-  //   loading = true;
-  // }
+  Future<void> getNFT(BigInt id) async {
+    List<dynamic> result = await _model.query("getNFT", [id]);
+    nft = NFT.fromJsonList(result);
+    print('$nft');
+    setState(() {});
+    loading = true;
+  }
 
   Future<void> getCounter() async {
     //give argument to getCounter the arg is string but it need to be address so it is converted to address
       List<dynamic> args = [_model.myAddress];
-    List<dynamic> result = await _model.query("getLenght", [EthereumAddress.fromHex(_model.myAddress)]);
+    List<dynamic> result = await _model.query("getCounter", []);
     length = int.parse(result[0].toString());
     setState(() {});
     loading = true;
@@ -133,7 +134,7 @@ List<NFT> allNFTs = [];
 
   Future<void> getTester() async {
     try{
-      List<dynamic> result = await _model.query("getTester", []);
+      List<dynamic> result = await _model.query("getFullLenght", []);
       tester = int.parse(result[0].toString());
       setState(() {});
       loading = true;
@@ -159,13 +160,13 @@ List<NFT> allNFTs = [];
     _model.initState(context);
     _model.initializeContract();
     ethClient = _model.getEthClient();
-    _model.initializeMyaddress();
+    //_model.initializeMyaddress();
     //fetch data from nft.dart and put it in allNFTs
     getTester();   
     getNFTlist();
     //allNFTs = getMyNFTlist() as List<NFT>;
-   // getNFT(BigInt.zero);
-    fetchData();
+    getNFT(BigInt.zero);
+    //fetchData();
     getCounter();  
   }
 
@@ -368,20 +369,36 @@ List<NFT> allNFTs = [];
             // ),
             Text('_model.allNfts.length ${_model.allNfts.length}'),
             Text('data.length ${data.length}'),
-
+            Text(' only 1 nft'),
+            productCard(
+              context: context,
+              id: nft.tokenId,
+              imageUrl: nft.imageUrl,
+              productName: nft.name,
+              price: "\$${nft.price.toString()}",
+            ),
+            Text('list:'),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: GridView.builder(
+                child: ListView.builder(
+                // GridView.builder(
+                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                //     crossAxisCount: 2, // Adjust the cross axis count as needed
+                //     crossAxisSpacing: 4, // Adjust the spacing between grid items
+                //     mainAxisSpacing: 4, // Adjust the spacing between rows
+                //   ),
+                 // itemCount: _model.allNfts.length,
                   itemCount: _model.allNfts.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-
-                  ),
                   itemBuilder: (context, index) => productCard(
+                    // imageUrl: _model.allNfts[index].imageUrl,
+                    // productName: _model.allNfts[index].name,
+                    // price: "\$$_model.allNfts[index].price.toString()",
+                    // id: _model.allNfts[index].tokenId,
+                    context: context,
                     imageUrl: _model.allNfts[index].imageUrl,
                     productName: _model.allNfts[index].name,
-                    price: "\$$_model.allNfts[index].price.toString()",
+                    price: "\$${_model.allNfts[index].price.toString()}",
                     id: _model.allNfts[index].tokenId,
                   ),
                 )

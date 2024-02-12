@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import '../models/home_page_model.dart';
-import '../info_page.dart';
+import '../pages/info_page.dart';
+import 'package:image_network/image_network.dart';
 
 HomePageModel _model = HomePageModel();
 
 Widget productCard({
+  required BuildContext context, 
   required String imageUrl,
   required String productName,
   required String price,
@@ -17,6 +19,7 @@ Widget productCard({
   return Padding(
     padding: EdgeInsetsDirectional.fromSTEB(4, 12, 4, 0),
     child: Container(
+      width: 500,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -29,16 +32,19 @@ Widget productCard({
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              imageUrl,
-              width:double.maxFinite,
-              fit: BoxFit.cover,
+            child: Container(
+              width: MediaQuery.of(context).size.width / 2.5, // Fixed width
+              height: MediaQuery.of(context).size.width / 2.5, // Fixed height
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover, // Cover the entire container
+              ),
             ),
           ),
           Padding(

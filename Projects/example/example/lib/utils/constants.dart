@@ -14,7 +14,7 @@ class StyleConstants {
   static const Color secondaryColor = Color(0xFF1A1A1A);
   static const Color grayColor = Color.fromARGB(255, 180, 180, 180);
   static const Color titleTextColor = Color(0xFFFFFFFF);
-
+  static const Color blueNavBar = Color.fromARGB(0, 75, 57, 239);
   // Linear
   static const double linear8 = 8;
   static const double linear16 = 16;

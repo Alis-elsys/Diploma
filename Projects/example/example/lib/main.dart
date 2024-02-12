@@ -1,6 +1,6 @@
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'start_page.dart';
+import 'pages/start_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -38,8 +38,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
 
   }
-
-
 
   @override
   Widget build(BuildContext context) {

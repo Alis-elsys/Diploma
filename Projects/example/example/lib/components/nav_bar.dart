@@ -146,8 +146,8 @@
 
 
 import 'package:flutter/material.dart';
-import '../home_page.dart';
-import '../createNFT_page.dart';
+import '../pages/home_page.dart';
+import '../pages/createNFT_page.dart';
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);
   void initState(BuildContext context) {}

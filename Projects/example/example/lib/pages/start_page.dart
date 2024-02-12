@@ -192,11 +192,14 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/home_page.dart';
+import 'home_page.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+//import 'package:flutter_web3/flutter_web3.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import '../models/home_page_model.dart';
+
 
 class StartPage extends StatefulWidget {
   const StartPage({
@@ -214,14 +217,24 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   late W3MService _w3mService;
   bool _initialized = false;
-
+  final HomePageModel model = HomePageModel();
+  String currentAddress = '';
+  int currentChain = 0;
   @override
   void initState() {
     super.initState();
+    
+    if (_initialized) {
+      _w3mService.disconnect();
+      _initialized = false;
+    }
     _initializeService();
+    model.initState(context);
   }
 
   void _initializeService() async {
+    //if already initialized, return and navigate to home page
+
     W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
 
     _w3mService = W3MService(
@@ -266,12 +279,14 @@ class _StartPageState extends State<StartPage> {
 
   void _onSessionConnect(SessionConnect? args) {
     debugPrint('[$runtimeType] _onSessionConnect $args');
-    Navigator.push(
+    if (mounted) {
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => HomePageWidget(),
       ),
     );
+  }
   }
 
   void _onSessionDelete(SessionDelete? args) {
@@ -320,7 +335,7 @@ class _StartPageState extends State<StartPage> {
               Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
               _ButtonsView(w3mService: _w3mService),
               const Divider(height: 0.0),
-              _ConnectedView(w3mService: _w3mService)
+              _ConnectedView(w3mService: _w3mService, model: model)
             ],
           ),
         );
@@ -350,28 +365,33 @@ class _ButtonsView extends StatelessWidget {
 }
 
 class _ConnectedView extends StatelessWidget {
-  const _ConnectedView({required this.w3mService});
-  final W3MService w3mService;
+  _ConnectedView({required this.w3mService, required this.model});
+  final W3MService w3mService;  
+  final HomePageModel model;
 
   @override
   Widget build(BuildContext context) {
+
     if (!w3mService.isConnected) {
       return const SizedBox.shrink();
+    }else{
+      model.initializeMyaddress(w3mService);
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox.square(dimension: 12.0),
-        //W3MAccountButton(service: w3mService),
-        SessionWidget(
-          w3mService: w3mService,
-          launchRedirect: () {
-            w3mService.launchConnectedWallet();
-          },
-        ),
-        const SizedBox.square(dimension: 12.0),
-      ],
-    );
+
+        //text widget to display the connected wallet
+       // Text('Connected Wallet: ${connected ?? 'None'}'),
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (w3mService.isConnected) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePageWidget(),
+          ),
+        );
+      }
+    });
+
+    return const SizedBox.shrink();
   }
 }
 

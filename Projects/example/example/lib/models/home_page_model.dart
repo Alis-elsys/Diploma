@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:expandable/expandable.dart';
-import 'package:walletconnect_flutter_dapp/components/NFT.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+import '../components/NFT.dart';
 import 'package:http/http.dart' as http;
-import '/components/nav_bar.dart';
-import '../home_page.dart' show HomePageWidget;
+import '../components/nav_bar.dart';
+import '../pages/home_page.dart' show HomePageWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -37,7 +37,7 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    final String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     late int currentNftId;
     late List<dynamic> data;
 
@@ -63,8 +63,11 @@ class HomePageModel extends HomePageWidget {
     navBarModel = CustomNavBar();
   }
 
-  Future<void> initializeMyaddress() async {
-    address = await _ethClient.coinbaseAddress();
+  Future<void> initializeMyaddress(W3MService _w3mService) async {
+    String? address = _w3mService.address;
+    if (address != null) {
+     myAddress = address;
+    }
   }
 
   Future<void> initializeContract() async {
@@ -96,7 +99,7 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0x22353E81De42FCD8c2f9eA34FD8F4d1A4aA675ea";
+    String contractAddress = "0x534B9ac61fA2Fc7b290A687933F9F649cAD7001D";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));
@@ -130,7 +133,7 @@ class HomePageModel extends HomePageWidget {
     return result;
   }
 
-   Future<void> mintNFT(String name, String description, String imageUrl, double price) async {
+   Future<void> mintNFT(String name, String description, String imageUrl, BigInt price) async {
     List<dynamic> result = await query("mintNFT()", [name, description, imageUrl, price]);
     BigInt tokenId  = result[0];
 

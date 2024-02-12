@@ -1,9 +1,9 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'components/NFT.dart';
-import 'components/nav_bar.dart';
-import 'models/home_page_model.dart';
+import '../components/NFT.dart';
+import '../components/nav_bar.dart';
+import '../models/home_page_model.dart';
 
 
 class CreatePageWidget extends StatefulWidget {
@@ -111,7 +111,7 @@ class _CreatePageState extends State<CreatePageWidget> {
                 String NFTname = controllerName.text;
                 String imageUrl = controllerImageUrl.text;
                 String description = controllerDescription.text;
-                double price = double.parse(controllerPrice.text);
+                BigInt price = BigInt.parse(controllerPrice.text);
                 _model.mintNFT(NFTname, description, imageUrl, price);
               }, 
               child: null,

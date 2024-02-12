@@ -28,6 +28,8 @@ dependencies:
   provider: ^6.1.1
   http: ^1.1.2
   expandable: ^5.0.1
+  image_network: ^2.5.6
+  flutter_web3: ^2.1.8
   #js: ^0.6.2
 
 
