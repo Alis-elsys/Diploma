@@ -1,6 +1,6 @@
 <h1>NFT Marketplace</h1>
 
-<b>DApp writen in Flutter</b>
+<b>Mobile DApp writen in Flutter</b>
 
 <p> <br>
 The main working space is in Projects/example/example
