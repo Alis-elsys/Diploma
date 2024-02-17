@@ -5,19 +5,18 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-contract Shop is Ownable, ERC721URIStorage {
+contract Shop is ERC721URIStorage{
     
     using Counters for Counters.Counter;
     Counters.Counter public NFTsCounter;
     Counters.Counter public NFTsIds;
-    address private Glob_owner;
 
     struct NFT{
-        uint256 id; //moje bi trqbva da promenq na float zaradi flutter constructiona
+        uint256 id; 
         string name;
         string description;
         string imageUrl; 
-        uint256 price;
+        int price;
         address payable NFTowner;
     }
 
@@ -27,19 +26,18 @@ contract Shop is Ownable, ERC721URIStorage {
     mapping(address => uint256) public userSoldCounts;
 
 
-    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
-    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
+    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, int price);
+    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, int price);
 
-    constructor(address initialOwner) ERC721("Shop", "SHOP") Ownable(initialOwner) {
-        Glob_owner = initialOwner;
+    constructor() ERC721("Shop", "SHOP"){
     }
 
-    function mint(string memory name, string memory description, string memory imageUrl, uint price) external onlyOwner returns(uint256){
-        
+    function mint(string memory name, string memory description, string memory imageUrl, int price) 
+    external returns(uint256){
         uint256 tokenId = NFTsIds.current();
 
         _safeMint(msg.sender, tokenId);
-        _setTokenURI(tokenId, imageUrl);
+       // _setTokenURI(tokenId, imageUrl);
 
         NFT memory newNFT = NFT({
             id: tokenId,
@@ -61,21 +59,25 @@ contract Shop is Ownable, ERC721URIStorage {
     }
 
     function buyNFT(uint256 tokenId) external payable{
-        require(msg.value >= allNFTs[tokenId].price, "Not enough ether");
+        //require(msg.value >= allNFTs[tokenId].price, "Not enough ether");
         require(allNFTs[tokenId].NFTowner != msg.sender, "You are the owner of this NFT");
 
         payable(allNFTs[tokenId].NFTowner).transfer(msg.value);
         userBoughtCounts[msg.sender]++;
         userSoldCounts[allNFTs[tokenId].NFTowner]++;
+        delete myNFTs[allNFTs[tokenId].NFTowner][tokenId];
+        allNFTs[tokenId].NFTowner = payable(msg.sender);
         myNFTs[msg.sender].push(allNFTs[tokenId]);
-        /// myNFTs[msg.sender] = allNFTs[tokenId];
-
-        emit TokenBought(tokenId, payable(msg.sender), allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].imageUrl, allNFTs[tokenId].price);
+    
+        emit TokenBought(tokenId, payable(msg.sender), allNFTs[tokenId].name, 
+        allNFTs[tokenId].description, allNFTs[tokenId].imageUrl, allNFTs[tokenId].price);
     }
 
-    function deleteNFT(uint256 tokenId) external onlyOwner{
+    function deleteNFT(uint256 tokenId) external {
+        require(allNFTs[tokenId].NFTowner == msg.sender, "You are not the owner of this NFT");
+        
+        delete myNFTs[msg.sender][tokenId]; 
         delete allNFTs[tokenId];
-        myNFTs[msg.sender].pop(); 
         _burn(tokenId);
         NFTsCounter.decrement();
     }
@@ -93,7 +95,6 @@ contract Shop is Ownable, ERC721URIStorage {
             return empty;     
         }
         return allNFTs[tokenId];
-
     }
 
     function getAllNFTs() public view returns(NFT[] memory){
@@ -113,15 +114,8 @@ contract Shop is Ownable, ERC721URIStorage {
     }
 
     function getLenght(address sender) public view returns (uint){
-        return myNFTs[sender].length;
-    }
-
-    function getFullLenght() public view returns (uint){
-        NFT[] memory allNFTsArray = new NFT[](NFTsCounter.current());
-        for(uint256 i = 0; i < NFTsCounter.current(); i++){
-            allNFTsArray[i] = allNFTs[i];
-        }
-        return allNFTsArray.length;
+        uint i = myNFTs[sender].length;
+        return i;
     }
 
     function getCounter() public view returns (uint){
