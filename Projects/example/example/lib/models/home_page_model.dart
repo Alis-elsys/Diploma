@@ -37,7 +37,7 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String myAddress = "0x0000000000000000000000000000000000000000";  //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     late int currentNftId;
     late List<dynamic> data;
 
@@ -133,6 +133,8 @@ class HomePageModel extends HomePageWidget {
     return result;
   }
 
+  
+
    Future<void> mintNFT(String name, String description, String imageUrl, BigInt price) async {
     List<dynamic> result = await query("mintNFT()", [name, description, imageUrl, price]);
     BigInt tokenId  = result[0];
@@ -149,7 +151,11 @@ class HomePageModel extends HomePageWidget {
   }
 
   Future<List<NFT>> getAllNFTs() async {
-    List<dynamic> result = await query("getAllNFTs()", []);
+    final contract = await getContract();
+    final function = contract.function('getAllNFTs');
+    final result = await _ethClient.call(
+        contract: contract, function: function, params: []);
+         
     List<NFT> nfts = [];
     for (int i = 0; i < result.length; i++) {
       List<dynamic> nft = result[i];
@@ -165,6 +171,7 @@ class HomePageModel extends HomePageWidget {
     return nfts;
   }
 
+  
   //logout function
   void logout() {
     //logout of the wallet account and go back to start hage

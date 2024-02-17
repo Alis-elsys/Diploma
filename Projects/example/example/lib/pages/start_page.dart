@@ -297,6 +297,7 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
     final isCircular = Web3ModalTheme.radiusesOf(context).isCircular();
+    _w3mService.disconnect();
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(

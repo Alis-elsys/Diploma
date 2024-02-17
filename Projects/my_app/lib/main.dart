@@ -1,24 +1,93 @@
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'package:my_app/utils/routes.dart';
-import 'package:my_app/pages/login_page.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:my_app/homescreen.dart';
+import 'pages/start_page.dart';
+import 'package:my_app/utils/string_constants.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:http/src/client.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:flutter/services.dart';
+import 'components/NFT.dart';
 
-void main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  Stripe.publishableKey = "pk_test_51OFkVyJqYgKx7O77UgiYQUNWUM5KuUgivQWN3RwGPtBBHB0wTwcLlm5Rc6GAv3dlYGkWxCBm0STS0XkHn0fjuLcw00elCQ6JEu";
+void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  bool _isDarkMode = false;
+  Web3ModalThemeData? _themeData;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        final platformDispatcher = View.of(context).platformDispatcher;
+        final platformBrightness = platformDispatcher.platformBrightness;
+        _isDarkMode = platformBrightness == Brightness.dark;
+      });
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomeScreen(),
+    //List<NFT> nfts = fetchNFTData();
+    return Web3ModalTheme(
+      isDarkMode: _isDarkMode,
+      themeData: _themeData,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: StringConstants.w3mPageTitleV3,
+        home: StartPage(
+          swapTheme: () => _swapTheme(),
+          changeTheme: () => _changeTheme(),
+        ),
+      ),
     );
   }
-}
 
+  // List<NFT>  () {
+  //   // Simulated data for demonstration purposes
+  //   return [
+  //     NFT(tokenId: 1, name: 'NFT 1', description: 'Description 1', imageUrl: 'https://example.com/nft1.jpg'),
+  //     NFT(tokenId: 2, name: 'NFT 2', description: 'Description 2', imageUrl: 'https://example.com/nft2.jpg'),
+  //   ];
+  // }
+  
+  
+    void _swapTheme() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+  }
+
+  void _changeTheme() {
+    setState(() {
+      _themeData = (_themeData == null)
+          ? Web3ModalThemeData(
+              lightColors: Web3ModalColors.lightMode.copyWith(
+                accent100: Colors.red,
+                background100: const Color.fromARGB(255, 187, 234, 255),
+                background125: const Color.fromARGB(255, 187, 234, 255),
+              ),
+              darkColors: Web3ModalColors.darkMode.copyWith(
+                accent100: Colors.orange,
+                background100: const Color.fromARGB(255, 36, 0, 120),
+                background125: const Color.fromARGB(255, 36, 0, 120),
+              ),
+              radiuses: Web3ModalRadiuses.circular,
+            )
+          : null;
+    });
+  }
+}

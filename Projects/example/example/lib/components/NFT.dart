@@ -40,7 +40,7 @@ class NFT {
   factory NFT.fromJsonList(List<dynamic> json) {
     print(json);
     return NFT(
-      tokenId: BigInt.from(json[0]),
+      tokenId: json[0] as BigInt,
       name: json[1] as String,
       description: json[2] as String,
       imageUrl: json[3] as String,

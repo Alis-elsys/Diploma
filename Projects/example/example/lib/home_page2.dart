@@ -1,8 +1,7 @@
 import 'dart:math';
-
-import 'package:walletconnect_flutter_dapp/models/home_page_model.dart';
-import '../components/nav_bar.dart';
- import 'package:flutter/material.dart';
+import 'models/home_page_model.dart';
+import 'components/nav_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'home_page2.dart';
@@ -428,7 +427,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           Wrap(
             key: _model.navBarModel.key,
             direction: Axis.horizontal,
-            children: [NavBarWidget()]
+            children: [CustomNavBar()]
           ),
           // wrapWithModel(
           //   model: _model.navBarModel,

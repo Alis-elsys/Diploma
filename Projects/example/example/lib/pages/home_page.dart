@@ -11,6 +11,7 @@ import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/src/client.dart';
 import 'package:flutter/services.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import '../components/nav_bar.dart';
 import '../components/NFT_card.dart';
@@ -22,15 +23,15 @@ export 'home_page.dart';
 
 class HomePageWidget extends StatefulWidget {
   //final List<NFT> nfts;
+    late HomePageModel model;
 
-  const HomePageWidget({super.key});
+   HomePageWidget();
 
   @override
   State<HomePageWidget> createState() => _HomePageWidgetState();
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  late HomePageModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String name = '';
  
@@ -86,38 +87,43 @@ List<NFT> allNFTs = [];
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
     String contractAddress = "0x0C5186Ba7eCda919Db737946C4cfF9A5d5EF1786";
-
-    final contract = DeployedContract(ContractAbi.fromJson(abi, _model.contractName),
+    //widget.model from HomePageWidget
+    
+    final contract = DeployedContract(ContractAbi.fromJson(abi, widget.model.contractName),
         EthereumAddress.fromHex(contractAddress));
 
     return contract;
   }
 
   Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    final contract = await _model.getContract();
+    final contract = await widget.model.getContract();
     final function = contract.function(functionName);
     final result = await ethClient.call(
         contract: contract, function: function, params: args);
     return result;
   }
   Future<void> getNFTlist() async {
-    List<dynamic> result = await _model.query("getAllNFTs", []);
+    // List<dynamic> result = await widget.model.query("getAllNFTs", []);
 
+    // print(result);
+    List<dynamic> result = await widget.model.getAllNFTs();
     print(result);
-    _model.allNfts = result[0].map((e) => NFT.fromJsonList(e as List<dynamic>)).toList();
-    setState(() {});
-    loading = true;
+    widget.model.allNfts = await widget.model.getAllNFTs();
+
+    // _model.allNfts = result[0].map((e) => NFT.fromJsonList(e as List<dynamic>)).toList();
+    // setState(() {});
+    // loading = true;
   }
 
   Future<void> getMyNFTlist() async {
-   _model.allNfts = _model.getAllNFTs() as List<NFT>;
+   widget.model.allNfts = widget.model.getAllNFTs() as List<NFT>;
     setState(() {});
     loading = true;
   }
 
   Future<void> getNFT(BigInt id) async {
-    List<dynamic> result = await _model.query("getNFT", [id]);
-    nft = NFT.fromJsonList(result);
+    List<dynamic> result = await widget.model.query("getNFT", [id]);
+    nft = NFT.fromJsonList(result[0]);
     print('$nft');
     setState(() {});
     loading = true;
@@ -125,8 +131,8 @@ List<NFT> allNFTs = [];
 
   Future<void> getCounter() async {
     //give argument to getCounter the arg is string but it need to be address so it is converted to address
-      List<dynamic> args = [_model.myAddress];
-    List<dynamic> result = await _model.query("getCounter", []);
+      List<dynamic> args = [widget.model.myAddress];
+    List<dynamic> result = await widget.model.query("getCounter", []);
     length = int.parse(result[0].toString());
     setState(() {});
     loading = true;
@@ -134,7 +140,7 @@ List<NFT> allNFTs = [];
 
   Future<void> getTester() async {
     try{
-      List<dynamic> result = await _model.query("getFullLenght", []);
+      List<dynamic> result = await widget.model.query("getFullLenght", []);
       tester = int.parse(result[0].toString());
       setState(() {});
       loading = true;
@@ -156,11 +162,11 @@ List<NFT> allNFTs = [];
   @override
   void initState() {
     super.initState();
-    _model = HomePageModel();
-    _model.initState(context);
-    _model.initializeContract();
-    ethClient = _model.getEthClient();
-    //_model.initializeMyaddress();
+    widget.model = HomePageModel();
+    widget.model.initState(context);
+    widget.model.initializeContract();
+    ethClient = widget.model.getEthClient();
+    //widget.model.initializeMyaddress();
     //fetch data from nft.dart and put it in allNFTs
     getTester();   
     getNFTlist();
@@ -178,7 +184,7 @@ List<NFT> allNFTs = [];
   // }
 
   Future<void> fetchData() async {
-    final response = await get(Uri.parse(_model.blockchainUrl)); // Replace the URL with your API endpoint
+    final response = await get(Uri.parse(widget.model.blockchainUrl)); // Replace the URL with your API endpoint
 
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
@@ -200,7 +206,7 @@ List<NFT> allNFTs = [];
 
   @override
   void dispose() {
-    _model.dispose();
+    widget.model.dispose();
 
     super.dispose();
   }
@@ -244,8 +250,8 @@ List<NFT> allNFTs = [];
                   child: Container(
                     width: MediaQuery.sizeOf(context).width * 0.4,
                     child: TextFormField(
-                      controller: _model.textController,
-                      focusNode: _model.textFieldFocusNode,
+                      controller: widget.model.textController,
+                      focusNode: widget.model.textFieldFocusNode,
                       autofocus: false,
                       obscureText: false,
                       decoration: InputDecoration(
@@ -282,7 +288,7 @@ List<NFT> allNFTs = [];
                         ),
                       ),
                       // validator:
-                      //     _model.textControllerValidator(context, _model.textController?.text),
+                      //     widget.model.textControllerValidator(context, widget.model.textController?.text),
                     ),
                   ),
                 ),
@@ -312,7 +318,7 @@ List<NFT> allNFTs = [];
                 ),
               ],
             ),
-            Text('address: ${_model.myAddress.toString()}'),
+            Text('address: ${widget.model.myAddress.toString()}'),
             Text(
               "tester $tester",
               style: TextStyle(
@@ -367,7 +373,7 @@ List<NFT> allNFTs = [];
             //   productName: nft.name,
             //   price: "\$${nft.price.toString()}",
             // ),
-            Text('_model.allNfts.length ${_model.allNfts.length}'),
+            Text('widget.model.allNfts.length ${widget.model.allNfts.length}'),
             Text('data.length ${data.length}'),
             Text(' only 1 nft'),
             productCard(
@@ -388,18 +394,18 @@ List<NFT> allNFTs = [];
                 //     crossAxisSpacing: 4, // Adjust the spacing between grid items
                 //     mainAxisSpacing: 4, // Adjust the spacing between rows
                 //   ),
-                 // itemCount: _model.allNfts.length,
-                  itemCount: _model.allNfts.length,
+                 // itemCount: widget.model.allNfts.length,
+                  itemCount: widget.model.allNfts.length,
                   itemBuilder: (context, index) => productCard(
-                    // imageUrl: _model.allNfts[index].imageUrl,
-                    // productName: _model.allNfts[index].name,
-                    // price: "\$$_model.allNfts[index].price.toString()",
-                    // id: _model.allNfts[index].tokenId,
+                    // imageUrl: widget.model.allNfts[index].imageUrl,
+                    // productName: widget.model.allNfts[index].name,
+                    // price: "\$$widget.model.allNfts[index].price.toString()",
+                    // id: widget.model.allNfts[index].tokenId,
                     context: context,
-                    imageUrl: _model.allNfts[index].imageUrl,
-                    productName: _model.allNfts[index].name,
-                    price: "\$${_model.allNfts[index].price.toString()}",
-                    id: _model.allNfts[index].tokenId,
+                    imageUrl: widget.model.allNfts[index].imageUrl,
+                    productName: widget.model.allNfts[index].name,
+                    price: "\$${widget.model.allNfts[index].price.toString()}",
+                    id: widget.model.allNfts[index].tokenId,
                   ),
                 )
               )

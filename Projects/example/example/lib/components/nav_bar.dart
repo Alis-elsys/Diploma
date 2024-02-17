@@ -212,7 +212,7 @@ class _NavBarState extends State<NavBar> {
               buildIconButton(Icons.home_rounded, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePageWidget()),
+                  MaterialPageRoute(builder: (context) => HomePageWidget()),
                 );
               }),
               buildIconButton(Icons.chat_bubble_rounded, () {

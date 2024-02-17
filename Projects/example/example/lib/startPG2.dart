@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'pages/home_page.dart';
 import 'models/home_page_model.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
@@ -107,7 +107,7 @@ class _StartPageState extends State<StartPage> {
         //if is connected and if session is running
         if(_w3mService.isConnected & _isSessionRunning()){
           //save the address of the connected wallet
-          _model.initializeMyaddress();
+          //_model.initializeMyaddress();
           return HomePageWidget();
         }
         return Scaffold(
