@@ -98,7 +98,7 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0x6E08b9F5A87A17e2F5656a593Ed3E98A918BA579";
+    String contractAddress = "0xb38237d44a2DaE9F97d970559B7c9F4373f00c1b";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));

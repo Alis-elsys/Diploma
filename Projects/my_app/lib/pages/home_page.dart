@@ -115,29 +115,27 @@ List<NFT> allNFTs = [];
   }
 
   Future<void> getMyNFTlist() async {
-   _model.allNfts = _model.getAllNFTs() as List<NFT>;
-    setState(() {});
-    loading = true;
+    setState(() {
+      _model.allNfts = _model.query('getMyNFTs', []) as List<NFT>;
+    });
   }
 
   Future<void> getNFT(BigInt id) async {
     List<dynamic> result = await _model.query("getNFT", [id]);
-    nft = NFT.fromJsonList(result);
     print('$nft');
-    setState(() {});
-    loading = true;
+    setState(() {
+          nft = NFT.fromJsonList(result);
+    });
   }
 
   Future<void> getCounter() async {
     try{
       List<dynamic> result = await _model.query("getCounter", []);
-      counter = int.parse(result[0].toString());
-      setState(() {});
-      loading = true;
+      setState(() {
+        counter = int.parse(result.toString());
+      });
     } catch (e) {
       print('Error in getCount: $e');
-    } finally {
-      loading = false;
     }
   }
 

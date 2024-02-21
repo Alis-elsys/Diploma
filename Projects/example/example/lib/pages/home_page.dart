@@ -103,12 +103,13 @@ List<NFT> allNFTs = [];
     return result;
   }
   
-   Future<void> getNFTlist() async {
+  Future<void> getNFTlist() async {
     try {
       List<dynamic> result = await widget.model.query("getAllNFTs", []);
       setState(() {
+        print('result length: ${result.length}');
         for (int i =0; i< result.length; i++){
-          widget.model.allNfts.add(NFT.fromJsonList(result[0][i]));
+          widget.model.allNfts.add(NFT.fromJsonList(result[i]));
         }
       });
     } catch (error) {
@@ -141,7 +142,8 @@ List<NFT> allNFTs = [];
 
   Future<void> getTester() async {
     try{
-      List<dynamic> result = await widget.model.query("getLenght", [widget.model.myAddress as EthereumAddress]);
+      EthereumAddress args = widget.model.myAddress as EthereumAddress;
+      List<dynamic> result = await widget.model.query("getLenght", [args]);
       setState(() { 
         tester = int.parse(result[0].toString());
       });
@@ -152,7 +154,7 @@ List<NFT> allNFTs = [];
 
   Future<void> refreshData(String targetAddress) async {
     await getNFTlist();
-    //await getNFT(BigInt.zero);
+    //await getNFT(BigInt.one);
     await getCounter();
     await getTester();
   }
@@ -170,7 +172,7 @@ List<NFT> allNFTs = [];
     getTester();   
     getNFTlist();
     //allNFTs = getMyNFTlist() as List<NFT>;
-    getNFT(BigInt.zero);
+    getNFT(BigInt.one);
     //fetchData();
     getCounter();  
   }
