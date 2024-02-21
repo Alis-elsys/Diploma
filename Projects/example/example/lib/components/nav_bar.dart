@@ -148,8 +148,11 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 import '../pages/createNFT_page.dart';
+import '../models/home_page_model.dart';
+
 class NavBar extends StatefulWidget {
-  const NavBar({Key? key}) : super(key: key);
+  late HomePageModel model;
+  NavBar({Key? key}) : super(key: key);
   void initState(BuildContext context) {}
 
   void dispose() {}
@@ -212,7 +215,7 @@ class _NavBarState extends State<NavBar> {
               buildIconButton(Icons.home_rounded, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePageWidget()),
+                  MaterialPageRoute(builder: (context) => HomePageWidget(address: widget.model.tempAddress)),
                 );
               }),
               buildIconButton(Icons.chat_bubble_rounded, () {

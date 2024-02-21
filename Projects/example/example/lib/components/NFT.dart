@@ -44,7 +44,7 @@ class NFT {
       name: json[1] as String,
       description: json[2] as String,
       imageUrl: json[3] as String,
-      price: BigInt.from(json[4]),
+      price: json[4] as BigInt,
       owner: json[5] as EthereumAddress,
       // Parse other attributes as needed
     );

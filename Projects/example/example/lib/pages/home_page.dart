@@ -5,7 +5,7 @@ import 'dart:convert';
 import '../components/NFT.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/models/home_page_model.dart';
+import '../models/home_page_model.dart';
 //import 'package:walletconnect_flutter_v2/apis/core/relay_client/json_rpc_2/src/client.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
@@ -24,8 +24,8 @@ export 'home_page.dart';
 class HomePageWidget extends StatefulWidget {
   //final List<NFT> nfts;
     late HomePageModel model;
-
-   HomePageWidget();
+//
+   HomePageWidget({required String? address});
 
   @override
   State<HomePageWidget> createState() => _HomePageWidgetState();
@@ -102,17 +102,18 @@ List<NFT> allNFTs = [];
         contract: contract, function: function, params: args);
     return result;
   }
-  Future<void> getNFTlist() async {
-    // List<dynamic> result = await widget.model.query("getAllNFTs", []);
-
-    // print(result);
-    List<dynamic> result = await widget.model.getAllNFTs();
-    print(result);
-    widget.model.allNfts = await widget.model.getAllNFTs();
-
-    // _model.allNfts = result[0].map((e) => NFT.fromJsonList(e as List<dynamic>)).toList();
-    // setState(() {});
-    // loading = true;
+  
+   Future<void> getNFTlist() async {
+    try {
+      List<dynamic> result = await widget.model.query("getAllNFTs", []);
+      setState(() {
+        for (int i =0; i< result.length; i++){
+          widget.model.allNfts.add(NFT.fromJsonList(result[0][i]));
+        }
+      });
+    } catch (error) {
+      print("Error fetching NFT list: $error");
+    }
   }
 
   Future<void> getMyNFTlist() async {
@@ -131,23 +132,21 @@ List<NFT> allNFTs = [];
 
   Future<void> getCounter() async {
     //give argument to getCounter the arg is string but it need to be address so it is converted to address
-      List<dynamic> args = [widget.model.myAddress];
+    //  List<dynamic> args = [widget.model.myAddress];
     List<dynamic> result = await widget.model.query("getCounter", []);
-    length = int.parse(result[0].toString());
-    setState(() {});
-    loading = true;
+    setState(() {
+      length = int.parse(result[0].toString());
+    });
   }
 
   Future<void> getTester() async {
     try{
-      List<dynamic> result = await widget.model.query("getFullLenght", []);
-      tester = int.parse(result[0].toString());
-      setState(() {});
-      loading = true;
+      List<dynamic> result = await widget.model.query("getLenght", [widget.model.myAddress as EthereumAddress]);
+      setState(() { 
+        tester = int.parse(result[0].toString());
+      });
     } catch (e) {
       print('Error in getCount: $e');
-    } finally {
-      loading = false;
     }
   }
 
@@ -166,7 +165,7 @@ List<NFT> allNFTs = [];
     widget.model.initState(context);
     widget.model.initializeContract();
     ethClient = widget.model.getEthClient();
-    //widget.model.initializeMyaddress();
+    widget.model.initializeMyaddress(widget.model.tempAddress);
     //fetch data from nft.dart and put it in allNFTs
     getTester();   
     getNFTlist();

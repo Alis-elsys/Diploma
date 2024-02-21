@@ -38,8 +38,8 @@ class _StartPageState extends State<StartPage> {
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: const PairingMetadata(
-        name: StringConstants.w3mPageTitleV3,
-        description: StringConstants.w3mPageTitleV3,
+        name: StringConstants.startPageTitle,
+        description: StringConstants.startPageTitle,
         url: 'https://www.walletconnect.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
@@ -79,7 +79,7 @@ class _StartPageState extends State<StartPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePageWidget(),
+        builder: (context) => HomePageWidget(address: _model.tempAddress),
       ),
     );
   }
@@ -108,13 +108,13 @@ class _StartPageState extends State<StartPage> {
         if(_w3mService.isConnected & _isSessionRunning()){
           //save the address of the connected wallet
           //_model.initializeMyaddress();
-          return HomePageWidget();
+          return HomePageWidget(address: _model.tempAddress);
         }
         return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text(StringConstants.w3mPageTitleV3),
+        title: const Text(StringConstants.startPageTitle),
         backgroundColor: Web3ModalTheme.colorsOf(context).background100,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100
         ),

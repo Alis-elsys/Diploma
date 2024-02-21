@@ -29,7 +29,6 @@ class HomePageModel extends HomePageWidget {
   late http.Client _httpClient;
     late Web3Client _ethClient;
     late DeployedContract _contract;
-    late EthereumAddress address;
     final String blockchainUrl =
       "https://sepolia.infura.io/v3/7f0484b1a988417e9be1706dd241a9fd"; //Endpoint for the blockchain
     final String apiKey = "FdTLCM20fELyB/28wtHUxbnRuicnICMQl1tC2ejUQzWUuYh2vGabFQ";
@@ -37,11 +36,12 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    String myAddress = "0x0000000000000000000000000000000000000000";  //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    late String myAddress;  //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String? tempAddress = '';
     late int currentNftId;
     late List<dynamic> data;
 
-    HomePageModel();
+    HomePageModel({super.address});
 
 
 
@@ -63,10 +63,9 @@ class HomePageModel extends HomePageWidget {
     navBarModel = CustomNavBar();
   }
 
-  Future<void> initializeMyaddress(W3MService _w3mService) async {
-    String? address = _w3mService.address;
+  Future<void> initializeMyaddress(String? address) async {
     if (address != null) {
-     myAddress = address;
+     myAddress = address.toString(); 
     }
   }
 
@@ -99,7 +98,7 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0x534B9ac61fA2Fc7b290A687933F9F649cAD7001D";
+    String contractAddress = "0x6E08b9F5A87A17e2F5656a593Ed3E98A918BA579";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));

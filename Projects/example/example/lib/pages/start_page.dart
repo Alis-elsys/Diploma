@@ -216,19 +216,23 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   late W3MService _w3mService;
+  String? tempAddress = '';
+
   bool _initialized = false;
+
   final HomePageModel model = HomePageModel();
   String currentAddress = '';
   int currentChain = 0;
   @override
   void initState() {
     super.initState();
-    
+
     if (_initialized) {
-      _w3mService.disconnect();
       _initialized = false;
     }
     _initializeService();
+    //_w3mService.disconnect();
+
     model.initState(context);
   }
 
@@ -241,8 +245,8 @@ class _StartPageState extends State<StartPage> {
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: const PairingMetadata(
-        name: StringConstants.w3mPageTitleV3,
-        description: StringConstants.w3mPageTitleV3,
+        name: StringConstants.startPageTitle,
+        description: StringConstants.startPageTitle,
         url: 'https://www.walletconnect.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
@@ -283,7 +287,7 @@ class _StartPageState extends State<StartPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePageWidget(),
+        builder: (context) => HomePageWidget(address: tempAddress),
       ),
     );
   }
@@ -297,12 +301,12 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
     final isCircular = Web3ModalTheme.radiusesOf(context).isCircular();
-    _w3mService.disconnect();
+    //_w3mService.disconnect();
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text(StringConstants.w3mPageTitleV3),
+        title: const Text(StringConstants.startPageTitle),
         backgroundColor: Web3ModalTheme.colorsOf(context).background100,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
@@ -336,7 +340,7 @@ class _StartPageState extends State<StartPage> {
               Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
               _ButtonsView(w3mService: _w3mService),
               const Divider(height: 0.0),
-              _ConnectedView(w3mService: _w3mService, model: model)
+              _ConnectedView(w3mService: _w3mService, model: model, tempAddress: tempAddress)
             ],
           ),
         );
@@ -366,9 +370,10 @@ class _ButtonsView extends StatelessWidget {
 }
 
 class _ConnectedView extends StatelessWidget {
-  _ConnectedView({required this.w3mService, required this.model});
+  _ConnectedView({required this.w3mService, required this.model, required this.tempAddress});
   final W3MService w3mService;  
   final HomePageModel model;
+  String? tempAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -376,7 +381,7 @@ class _ConnectedView extends StatelessWidget {
     if (!w3mService.isConnected) {
       return const SizedBox.shrink();
     }else{
-      model.initializeMyaddress(w3mService);
+      tempAddress = w3mService.address;
     }
 
         //text widget to display the connected wallet
@@ -386,7 +391,7 @@ class _ConnectedView extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePageWidget(),
+            builder: (context) => HomePageWidget(address: tempAddress),
           ),
         );
       }
