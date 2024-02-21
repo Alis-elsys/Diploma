@@ -37,7 +37,8 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    late String myAddress;  
+    //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     late int currentNftId;
     late List<dynamic> data;
 
@@ -47,8 +48,6 @@ class HomePageModel extends HomePageWidget {
 
 
   void initState(BuildContext context) {
-    // Initialize state of NavBar1 component.
-    // 1. Create FocusNode and TextEditingController for TextField.
     textFieldFocusNode = FocusNode();
     textController = TextEditingController();
     isExpanded = ExpandableController(initialExpanded: false);
@@ -59,7 +58,6 @@ class HomePageModel extends HomePageWidget {
       return null;
     };
 
-    //Create navBarModel 
     navBarModel = CustomNavBar();
   }
 
@@ -68,6 +66,7 @@ class HomePageModel extends HomePageWidget {
     if (address != null) {
      myAddress = address;
     }
+    print("My address: ${_w3mService.address}");
   }
 
   Future<void> initializeContract() async {
@@ -99,14 +98,14 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0x534B9ac61fA2Fc7b290A687933F9F649cAD7001D";
+    String contractAddress = "0x6E08b9F5A87A17e2F5656a593Ed3E98A918BA579";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));
 
     return contract;
   }
-
+//! transaction ili transaction.callcontract
   Future<String> transaction(String functionName, List<dynamic> args) async {
     EthPrivateKey credential = EthPrivateKey.fromHex(privateKey);
     DeployedContract contract = await getContract();

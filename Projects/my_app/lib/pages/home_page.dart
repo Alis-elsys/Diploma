@@ -56,7 +56,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   int balance = 0;
   String title = "";
-  int tester = 0;
+  int counter = 0;
   int length = 0;
   NFT nft = NFT(
     tokenId: BigInt.zero,
@@ -100,13 +100,18 @@ List<NFT> allNFTs = [];
         contract: contract, function: function, params: args);
     return result;
   }
+ 
   Future<void> getNFTlist() async {
-    List<dynamic> result = await _model.query("getAllNFTs", []);
-
-    print(result);
-    _model.allNfts = result[0].map((e) => NFT.fromJsonList(e as List<dynamic>)).toList();
-    setState(() {});
-    loading = true;
+    try {
+      List<dynamic> result = await _model.query("getAllNFTs", []);
+      setState(() {
+        for (int i =0; i< result[0].length; i++){
+          _model.allNfts.add(NFT.fromJsonList(result[0][i]));
+        }
+      });
+    } catch (error) {
+      print("Error fetching NFT list: $error");
+    }
   }
 
   Future<void> getMyNFTlist() async {
@@ -124,18 +129,22 @@ List<NFT> allNFTs = [];
   }
 
   Future<void> getCounter() async {
-    //give argument to getCounter the arg is string but it need to be address so it is converted to address
-      List<dynamic> args = [_model.myAddress];
-    List<dynamic> result = await _model.query("getCounter", []);
-    length = int.parse(result[0].toString());
-    setState(() {});
-    loading = true;
+    try{
+      List<dynamic> result = await _model.query("getCounter", []);
+      counter = int.parse(result[0].toString());
+      setState(() {});
+      loading = true;
+    } catch (e) {
+      print('Error in getCount: $e');
+    } finally {
+      loading = false;
+    }
   }
 
-  Future<void> getTester() async {
+  Future<void> getLenght() async {
     try{
       List<dynamic> result = await _model.query("getFullLenght", []);
-      tester = int.parse(result[0].toString());
+      length = int.parse(result[0].toString());
       setState(() {});
       loading = true;
     } catch (e) {
@@ -149,7 +158,7 @@ List<NFT> allNFTs = [];
     await getNFTlist();
     //await getNFT(BigInt.zero);
     await getCounter();
-    await getTester();
+    await getLenght();
   }
 
 
@@ -162,7 +171,7 @@ List<NFT> allNFTs = [];
     ethClient = _model.getEthClient();
     //_model.initializeMyaddress();
     //fetch data from nft.dart and put it in allNFTs
-    getTester();   
+    getLenght();  
     getNFTlist();
     //allNFTs = getMyNFTlist() as List<NFT>;
     getNFT(BigInt.zero);
@@ -314,7 +323,7 @@ List<NFT> allNFTs = [];
             ),
             Text('address: ${_model.myAddress.toString()}'),
             Text(
-              "tester $tester",
+              "counter $counter",
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 color: Color(0xFF101213),
@@ -323,7 +332,7 @@ List<NFT> allNFTs = [];
               ),
             ),
             Text(
-              "length  $length",
+              "length $length",
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 color: Color(0xFF101213),

@@ -186,9 +186,10 @@ class _ConnectedView extends StatelessWidget {
     }else{
       model.initializeMyaddress(w3mService);
     }
+    
+    Text("Connected Wallet: ${w3mService.selectedWallet}");    
+    Text('Connected Chain: ${w3mService.address}');
 
-        //text widget to display the connected wallet
-       // Text('Connected Wallet: ${connected ?? 'None'}'),
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (w3mService.isConnected) {
         Navigator.push(
