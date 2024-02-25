@@ -24,8 +24,9 @@ class HomePageModel extends HomePageWidget {
   ExpandableController? isExpanded;
   String? Function(BuildContext, String?)? textControllerValidator;
   // Model for NavBar1 component.
-  late CustomNavBar navBarModel;
+  late NavBar navBarModel;
   List<NFT> allNfts = [];
+  List<NFT> myNfts = [];  
   late http.Client _httpClient;
     late Web3Client _ethClient;
     late DeployedContract _contract;
@@ -36,9 +37,9 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    late String myAddress;  //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     String? tempAddress = '';
-    late int currentNftId;
+    int currentNftId = 0;
     late List<dynamic> data;
 
     HomePageModel({super.address});
@@ -60,7 +61,7 @@ class HomePageModel extends HomePageWidget {
     };
 
     //Create navBarModel 
-    navBarModel = CustomNavBar();
+    navBarModel = NavBar();
   }
 
   Future<void> initializeMyaddress(String? address) async {
@@ -98,7 +99,7 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0xb38237d44a2DaE9F97d970559B7c9F4373f00c1b";
+    String contractAddress = "0x049c364eEB80280b800D12DeF9a729E5bFD44560";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));
@@ -149,6 +150,10 @@ class HomePageModel extends HomePageWidget {
     ));
   }
 
+  Future<void> buyNFT(BigInt tokenId) async {
+    await transaction("buyNFT", [tokenId]);
+  }
+  
   Future<List<NFT>> getAllNFTs() async {
     final contract = await getContract();
     final function = contract.function('getAllNFTs');

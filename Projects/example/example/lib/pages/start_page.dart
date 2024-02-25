@@ -231,7 +231,7 @@ class _StartPageState extends State<StartPage> {
       _initialized = false;
     }
     _initializeService();
-    //_w3mService.disconnect();
+    _w3mService.disconnect();
 
     model.initState(context);
   }

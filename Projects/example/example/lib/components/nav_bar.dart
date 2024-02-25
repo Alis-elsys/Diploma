@@ -146,14 +146,22 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_dapp/pages/statistic_page.dart';
+import '../pages/settings_page.dart';
 import '../pages/home_page.dart';
 import '../pages/createNFT_page.dart';
 import '../models/home_page_model.dart';
+import '../pages/user_page.dart';
 
 class NavBar extends StatefulWidget {
-  late HomePageModel model;
+  HomePageModel model = HomePageModel();
+
   NavBar({Key? key}) : super(key: key);
-  void initState(BuildContext context) {}
+  
+  void initState(BuildContext context) {
+    model.initState(context);
+    model.initializeContract();
+  }
 
   void dispose() {}
   
@@ -218,15 +226,24 @@ class _NavBarState extends State<NavBar> {
                   MaterialPageRoute(builder: (context) => HomePageWidget(address: widget.model.tempAddress)),
                 );
               }),
-              buildIconButton(Icons.chat_bubble_rounded, () {
-                // TODO: Implement chat functionality
+              buildIconButton(Icons.align_vertical_bottom_outlined, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StatisticPageWidget()),
+                );
               }),
               buildAddButton(() {}),
               buildIconButton(Icons.person, () {
-                // TODO: Implement user profile functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserPageWidget()),
+                );
               }),
               buildIconButton(Icons.settings_sharp, () {
-                // TODO: Implement settings functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPageWidget()),
+                );
               }),
             ],
           ),
@@ -243,71 +260,26 @@ class _NavBarState extends State<NavBar> {
         color: Color(0xFF9299A1),
         size: 24,
       ),
-      iconSize: 50, // Fixed icon size
-      padding: EdgeInsets.zero, // No padding
     );
   }
 
   Widget buildAddButton(VoidCallback onPressed) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-              child: IconButton(
-                iconSize: 60,
-                color: Colors.indigoAccent,
-                focusColor: Colors.indigoAccent,
-                hoverColor: Colors.indigoAccent,
-                highlightColor: Colors.indigoAccent,
-                splashColor: Colors.indigoAccent,
-                disabledColor: Colors.indigoAccent,
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () {
-                  print('Add button pressed');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CreatePageWidget()),
-                  );
-                },
-              ),
-            ),
-          ],
+    return IconButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.indigoAccent), 
+      ),
+      icon: const Icon(
+        Icons.add,
+        color: Colors.white,
+        size: 30,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CreatePageWidget()),
         );
-    // return Padding(
-    //   padding: const EdgeInsets.only(bottom: 10),
-    //   child: Align(
-    //   alignment: Alignment.bottomCenter,
-    //  child: Ink(
-    //     decoration: const ShapeDecoration(
-    //       color: Colors.indigoAccent,
-    //       shape: CircleBorder(),
-    //     ),
-    //     child: IconButton(
-    //       onPressed: onPressed,
-    //       icon: Icon(
-    //         Icons.add,
-    //         color: Colors.white,
-    //         size: 30,
-    //       ),
-    //       iconSize: 60, // Fixed icon size
-    //       padding: const EdgeInsets.all(15), // Adjust padding as per requirement
-    //     ),
-    //   ),
-    // ),
-    // );
-  }
-}
-
-class CustomNavBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return NavBar(); // Use the NavBar directly
+      },
+    );  
   }
 }
 

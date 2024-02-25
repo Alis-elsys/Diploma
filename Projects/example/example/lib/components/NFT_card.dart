@@ -13,32 +13,22 @@ Widget productCard({
   required String imageUrl,
   required String productName,
   required String price,
-  required BigInt id, //podavah tova na functia ili nesho takova koqto she pokazva
+  required BigInt id,                //podavah tova na functia ili nesho takova koqto she pokazva
   VoidCallback? onPressed,
 }) {
   return Padding(
-    padding: EdgeInsetsDirectional.fromSTEB(4, 12, 4, 0),
-    child: Container(
-      width: 500,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            blurRadius: 2,
-            color: Colors.black87,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
+    padding: EdgeInsetsDirectional.fromSTEB(40, 12, 40, 0),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container( 
+        color : Colors.white,
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Container(
+            child: Container(              
               width: MediaQuery.of(context).size.width / 2.5, // Fixed width
               height: MediaQuery.of(context).size.width / 2.5, // Fixed height
               child: Image.network(
@@ -78,14 +68,14 @@ Widget productCard({
                 ),
                 TextButton(
                   onPressed:(){
-                    _model.currentNftId = id as int;
-                    // Navigator.push(
-                    //   context, 
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const InfoPageWidget(),
-                    //   ),
-                    //);
-                  },//dava stojnost na var ot modela s id-to na nft-to za da znae koe da pokaje
+                    _model.currentNftId = int.parse(id.toString());
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => const InfoPageWidget(),
+                      ),
+                    );
+                  },
                   style: ButtonStyle(
                     backgroundColor:
                         const MaterialStatePropertyAll(Colors.transparent),
@@ -95,7 +85,7 @@ Widget productCard({
                         borderRadius: BorderRadius.circular(8))),
                   ),
                   child: const Text(
-                    'Buy',
+                    'View more',
                     style: TextStyle(
                       fontFamily: 'Readex Pro',
                       color: Color(0xff4b39ef),
@@ -108,6 +98,7 @@ Widget productCard({
             ),
           ),
         ],
+      ),
       ),
     ),
   );

@@ -107,9 +107,9 @@ List<NFT> allNFTs = [];
     try {
       List<dynamic> result = await widget.model.query("getAllNFTs", []);
       setState(() {
-        print('result length: ${result.length}');
-        for (int i =0; i< result.length; i++){
-          widget.model.allNfts.add(NFT.fromJsonList(result[i]));
+        print('result length: ${result[0].length}');
+        for (int i =0; i< result[0].length; i++){
+          widget.model.allNfts.add(NFT.fromJsonList(result[0][i]));
         }
       });
     } catch (error) {
@@ -118,17 +118,28 @@ List<NFT> allNFTs = [];
   }
 
   Future<void> getMyNFTlist() async {
-   widget.model.allNfts = widget.model.getAllNFTs() as List<NFT>;
-    setState(() {});
-    loading = true;
+   try{
+      EthereumAddress args = EthereumAddress.fromHex(widget.model.myAddress);
+      List<dynamic> result = await widget.model.query("getMyNFTs", [args]);
+      setState(() {
+        for (int i =0; i< result.length; i++){
+          widget.model.myNfts.add(NFT.fromJsonList(result[0][i]));
+        }
+      });
+    } catch (e) {
+      print('Error in getMyNFT(): $e');
+    }
   }
 
   Future<void> getNFT(BigInt id) async {
-    List<dynamic> result = await widget.model.query("getNFT", [id]);
-    nft = NFT.fromJsonList(result[0]);
-    print('$nft');
-    setState(() {});
-    loading = true;
+    try{
+      List<dynamic> result = await widget.model.query("getNFT", [id]);
+      setState(() {
+        nft = NFT.fromJsonList(result[0]);
+      });
+    } catch (e) {
+      print('Error in getNFT(): $e');
+    }
   }
 
   Future<void> getCounter() async {
@@ -142,13 +153,13 @@ List<NFT> allNFTs = [];
 
   Future<void> getTester() async {
     try{
-      EthereumAddress args = widget.model.myAddress as EthereumAddress;
+      EthereumAddress args = EthereumAddress.fromHex(widget.model.myAddress);
       List<dynamic> result = await widget.model.query("getLenght", [args]);
       setState(() { 
         tester = int.parse(result[0].toString());
       });
     } catch (e) {
-      print('Error in getCount: $e');
+      print('Error in getTester: $e');
     }
   }
 
@@ -167,7 +178,7 @@ List<NFT> allNFTs = [];
     widget.model.initState(context);
     widget.model.initializeContract();
     ethClient = widget.model.getEthClient();
-    widget.model.initializeMyaddress(widget.model.tempAddress);
+    //widget.model.initializeMyaddress(widget.model.tempAddress);
     //fetch data from nft.dart and put it in allNFTs
     getTester();   
     getNFTlist();
@@ -177,33 +188,6 @@ List<NFT> allNFTs = [];
     getCounter();  
   }
 
-  // Future <void> getAllNFTs() async {
-  //   List<dynamic> result = await ethClient.call(
-  //       contract: ethClient,
-  //       function: ethClient.function("getAllNFTs"),
-  //       params: []);
-  // }
-
-  Future<void> fetchData() async {
-    final response = await get(Uri.parse(widget.model.blockchainUrl)); // Replace the URL with your API endpoint
-
-    if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON
-      setState(() {
-        data = jsonDecode(response.body); // Decode the JSON response
-      });
-    } else {
-      // If that call was not successful, throw an error.
-      throw Exception('Failed to load data');
-    }
-  }
-
-  void nameF() {
-    String name = 'name';
-    List<ContractFunction> functions = [];
-    List<ContractEvent> events = [];
-    ContractAbi contract = ContractAbi(name, functions, events);
-  }
 
   @override
   void dispose() {
@@ -215,18 +199,16 @@ List<NFT> allNFTs = [];
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-      //key: scaffoldKey,
-      backgroundColor: Color(0xFff1F4F8),
+      backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.indigoAccent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             //if there is a previous page go to it
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
-            //Navigator.of(context).pop();
           },
         ),
         title: const Text(
@@ -319,7 +301,7 @@ List<NFT> allNFTs = [];
                 ),
               ],
             ),
-            Text('address: ${widget.model.myAddress.toString()}'),
+            Text('address: ${widget.model.myAddress}'),
             Text(
               "tester $tester",
               style: TextStyle(
@@ -338,52 +320,8 @@ List<NFT> allNFTs = [];
                 fontWeight: FontWeight.w500,
               ),
             ),
-            // Expanded(
-            //   child: Padding(
-            //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            //     child: ListView(
-            //       children: [
-            //         GridView.builder(
-            //           shrinkWrap: true,
-            //           physics: NeverScrollableScrollPhysics(),
-            //           itemCount: allNFTs.length,
-            //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //             crossAxisCount: 2,
-            //           ),
-            //           itemBuilder: (context, index) => productCard(
-            //             imageUrl: allNFTs[index].imageUrl,
-            //             productName: allNFTs[index].name,
-            //             price: "\$${allNFTs[index].price.toString()}",
-            //           ),
-            //         ),
-            //       ]
-            //     ),
-            //   ),
-            // ),
-            // Text(
-            //   'token ids${nft.tokenId}',
-            //   style: TextStyle(
-            //     fontFamily: 'Plus Jakarta Sans',
-            //     color: Color(0xFF101213),
-            //     fontSize: 24,
-            //     fontWeight: FontWeight.w500,
-            //   ),
-            // ),
-            // productCard(
-            //   imageUrl: nft.imageUrl,
-            //   productName: nft.name,
-            //   price: "\$${nft.price.toString()}",
-            // ),
-            Text('widget.model.allNfts.length ${widget.model.allNfts.length}'),
-            Text('data.length ${data.length}'),
-            Text(' only 1 nft'),
-            productCard(
-              context: context,
-              id: nft.tokenId,
-              imageUrl: nft.imageUrl,
-              productName: nft.name,
-              price: "\$${nft.price.toString()}",
-            ),
+            Text('widget.model.allNfts.length ${widget.model.myNfts.length}'),
+            
             Text('list:'),
             Expanded(
               child: Padding(
@@ -395,18 +333,18 @@ List<NFT> allNFTs = [];
                 //     crossAxisSpacing: 4, // Adjust the spacing between grid items
                 //     mainAxisSpacing: 4, // Adjust the spacing between rows
                 //   ),
-                 // itemCount: widget.model.allNfts.length,
                   itemCount: widget.model.allNfts.length,
+                 // itemCount: widget.model.myNfts.length,
                   itemBuilder: (context, index) => productCard(
-                    // imageUrl: widget.model.allNfts[index].imageUrl,
-                    // productName: widget.model.allNfts[index].name,
-                    // price: "\$$widget.model.allNfts[index].price.toString()",
-                    // id: widget.model.allNfts[index].tokenId,
-                    context: context,
                     imageUrl: widget.model.allNfts[index].imageUrl,
                     productName: widget.model.allNfts[index].name,
-                    price: "\$${widget.model.allNfts[index].price.toString()}",
+                    price: widget.model.allNfts[index].price.toString(),
                     id: widget.model.allNfts[index].tokenId,
+                    context: context,
+                    // imageUrl: widget.model.myNfts[index].imageUrl,
+                    // productName: widget.model.myNfts[index].name,
+                    // price: "\$${widget.model.myNfts[index].price.toString()}",
+                    // id: widget.model.myNfts[index].tokenId,
                   ),
                 )
               )
@@ -416,7 +354,7 @@ List<NFT> allNFTs = [];
           ],
         ),
       ),
-      bottomNavigationBar: CustomNavBar()
+      bottomNavigationBar: NavBar()
     );
   }
 }
