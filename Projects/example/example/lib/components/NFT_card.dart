@@ -12,9 +12,9 @@ Widget productCard({
   required BuildContext context, 
   required String imageUrl,
   required String productName,
-  required String price,
-  required BigInt id,                //podavah tova na functia ili nesho takova koqto she pokazva
-  VoidCallback? onPressed,
+  required BigInt price,
+  required BigInt id,                    //podavah tova na functia ili nesho takova koqto she pokazva
+  required VoidCallback onPressed,
 }) {
   return Padding(
     padding: EdgeInsetsDirectional.fromSTEB(40, 12, 40, 0),
@@ -57,7 +57,7 @@ Widget productCard({
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  price,
+                  '\$ $price',
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
@@ -67,15 +67,7 @@ Widget productCard({
                   ),
                 ),
                 TextButton(
-                  onPressed:(){
-                    _model.currentNftId = int.parse(id.toString());
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(
-                        builder: (context) => const InfoPageWidget(),
-                      ),
-                    );
-                  },
+                  onPressed: onPressed,
                   style: ButtonStyle(
                     backgroundColor:
                         const MaterialStatePropertyAll(Colors.transparent),

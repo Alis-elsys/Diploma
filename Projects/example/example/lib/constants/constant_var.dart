@@ -22,7 +22,7 @@ class Variables{
   ExpandableController? isExpanded;
   String? Function(BuildContext, String?)? textControllerValidator;
   // Model for NavBar1 component.
-  late CustomNavBar navBarModel;
+  late NavBar navBarModel;
   List<NFT> allNfts = [];
   late Client _httpClient;
     late Web3Client _ethClient;

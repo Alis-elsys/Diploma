@@ -30,6 +30,7 @@ dependencies:
   expandable: ^5.0.1
   image_network: ^2.5.6
   flutter_web3: ^2.1.8
+  syncfusion_flutter_charts: ^24.2.8
   #js: ^0.6.2
 
 

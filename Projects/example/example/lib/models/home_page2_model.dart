@@ -14,7 +14,7 @@ class HomePageModel extends HomePageWidget {
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
   // Model for NavBar1 component.
-  late CustomNavBar navBarModel;
+  late NavBar navBarModel;
 
   HomePageModel({required super.address});
 
@@ -33,7 +33,7 @@ class HomePageModel extends HomePageWidget {
       return null;
     };
     //Create navBarModel 
-    navBarModel = CustomNavBar();
+    navBarModel = NavBar();
   }
 
   void dispose() {

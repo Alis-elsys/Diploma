@@ -427,7 +427,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           Wrap(
             key: _model.navBarModel.key,
             direction: Axis.horizontal,
-            children: [CustomNavBar()]
+            children: [NavBar()]
           ),
           // wrapWithModel(
           //   model: _model.navBarModel,

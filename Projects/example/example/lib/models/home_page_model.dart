@@ -37,12 +37,13 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    String myAddress = "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String myAddress = /*"0x0000000000000000000000000000000000000000";*/ "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     String? tempAddress = '';
-    int currentNftId = 0;
+    late int currentNftId;
     late List<dynamic> data;
+    double? balance = 0; 
 
-    HomePageModel({super.address});
+    HomePageModel();
 
 
 
@@ -59,14 +60,15 @@ class HomePageModel extends HomePageWidget {
       }
       return null;
     };
-
+    
+    currentNftId = -1;
     //Create navBarModel 
     navBarModel = NavBar();
   }
 
-  Future<void> initializeMyaddress(String? address) async {
-    if (address != null) {
-     myAddress = address.toString(); 
+  Future<void> initializeMyaddress() async {
+    if (tempAddress != null) {
+     myAddress = tempAddress.toString(); 
     }
   }
 
@@ -154,25 +156,18 @@ class HomePageModel extends HomePageWidget {
     await transaction("buyNFT", [tokenId]);
   }
   
-  Future<List<NFT>> getAllNFTs() async {
-    final contract = await getContract();
-    final function = contract.function('getAllNFTs');
-    final result = await _ethClient.call(
-        contract: contract, function: function, params: []);
-         
-    List<NFT> nfts = [];
-    for (int i = 0; i < result.length; i++) {
-      List<dynamic> nft = result[i];
-      nfts.add(NFT(
-        tokenId: nft[0],
-        name: nft[1],
-        description: nft[2],
-        imageUrl: nft[3],
-        price: nft[4],
-        owner: nft[5]
-      ));
+  Future<void> getNFTlist() async {
+    try {
+      List<dynamic> result = await query("getAllNFTs", []);
+      print('result length: ${result[0].length}');
+     // allNfts.clear();
+      for (int i = 0; i < result[0].length; i++){
+        allNfts.add(NFT.fromJsonList(result[0][i])); 
+      };
+      print('all: ${allNfts.length}');
+    } catch (error) {
+      print("Error fetching NFT list: $error");
     }
-    return nfts;
   }
 
   

@@ -15,7 +15,7 @@ class CreatePageWidget extends StatefulWidget {
 }
 
 class _CreatePageState extends State<CreatePageWidget> {
-   HomePageModel _model = HomePageModel();
+  HomePageModel _model = HomePageModel();
   late BigInt tokenId, price;
   late String name, description, imageUrl;
   TextEditingController controllerPrice = TextEditingController();
@@ -33,9 +33,11 @@ class _CreatePageState extends State<CreatePageWidget> {
 
   Future<void> createNFT(String name, String description, String imageUrl, BigInt price) async {
     try {
-      List<dynamic> result = await _model.query('mint', [name, description, imageUrl, price]);
+      List<dynamic> args = [name, description, imageUrl, price];
+      String result = await _model.transaction("mint", args);
+      print("NFT created: $result");
       setState(() { 
-          tokenId = result[0] as BigInt;
+          tokenId = result as BigInt;
       });
     } catch (error) {
       print("Error creating NFT: $error");
@@ -45,6 +47,8 @@ class _CreatePageState extends State<CreatePageWidget> {
   @override
   void initState() {
     super.initState();
+    _model.initState(context);
+    _model.initializeContract();
     tokenId = BigInt.zero;
   }
 

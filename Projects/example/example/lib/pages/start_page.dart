@@ -192,6 +192,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 //import 'package:flutter_web3/flutter_web3.dart';
@@ -216,7 +217,6 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   late W3MService _w3mService;
-  String? tempAddress = '';
 
   bool _initialized = false;
 
@@ -287,7 +287,7 @@ class _StartPageState extends State<StartPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePageWidget(address: tempAddress),
+        builder: (context) => HomePageWidget(),
       ),
     );
   }
@@ -340,7 +340,7 @@ class _StartPageState extends State<StartPage> {
               Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
               _ButtonsView(w3mService: _w3mService),
               const Divider(height: 0.0),
-              _ConnectedView(w3mService: _w3mService, model: model, tempAddress: tempAddress)
+              _ConnectedView(w3mService: _w3mService, model: model)
             ],
           ),
         );
@@ -370,10 +370,9 @@ class _ButtonsView extends StatelessWidget {
 }
 
 class _ConnectedView extends StatelessWidget {
-  _ConnectedView({required this.w3mService, required this.model, required this.tempAddress});
+  _ConnectedView({required this.w3mService, required this.model});
   final W3MService w3mService;  
   final HomePageModel model;
-  String? tempAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +380,8 @@ class _ConnectedView extends StatelessWidget {
     if (!w3mService.isConnected) {
       return const SizedBox.shrink();
     }else{
-      tempAddress = w3mService.address;
+      model.tempAddress = w3mService.address;
+      model.balance = w3mService.chainBalance;
     }
 
         //text widget to display the connected wallet
@@ -391,7 +391,7 @@ class _ConnectedView extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePageWidget(address: tempAddress),
+            builder: (context) => HomePageWidget(),
           ),
         );
       }

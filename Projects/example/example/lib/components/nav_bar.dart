@@ -223,7 +223,7 @@ class _NavBarState extends State<NavBar> {
               buildIconButton(Icons.home_rounded, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePageWidget(address: widget.model.tempAddress)),
+                  MaterialPageRoute(builder: (context) => HomePageWidget()),
                 );
               }),
               buildIconButton(Icons.align_vertical_bottom_outlined, () {
@@ -236,7 +236,7 @@ class _NavBarState extends State<NavBar> {
               buildIconButton(Icons.person, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const UserPageWidget()),
+                  MaterialPageRoute(builder: (context) => UserPageWidget()),
                 );
               }),
               buildIconButton(Icons.settings_sharp, () {

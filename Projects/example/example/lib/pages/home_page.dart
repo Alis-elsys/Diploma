@@ -8,24 +8,20 @@ import 'package:flutter/material.dart';
 import '../models/home_page_model.dart';
 //import 'package:walletconnect_flutter_v2/apis/core/relay_client/json_rpc_2/src/client.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:http/src/client.dart';
 import 'package:flutter/services.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import '../components/nav_bar.dart';
 import '../components/NFT_card.dart';
-import 'package:flutter/scheduler.dart';
-import '../main.dart';
-import 'start_page.dart';
-import 'home_page.dart';
+import 'info_page.dart';
+import 'my_nft_page.dart';
 export 'home_page.dart';
 
 class HomePageWidget extends StatefulWidget {
   //final List<NFT> nfts;
     late HomePageModel model;
 //
-   HomePageWidget({required String? address});
+   HomePageWidget();
 
   @override
   State<HomePageWidget> createState() => _HomePageWidgetState();
@@ -37,7 +33,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
  
   late Client httpClient;
   late Web3Client ethClient;
-  late EthereumAddress address;
   List<dynamic> data = [];
   TextEditingController controllerAmount = TextEditingController();
   TextEditingController controllerTitle = TextEditingController();
@@ -77,9 +72,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 */
 
 //make a struct or class for NFTs
-
-List<NFT> allNFTs = [];
-  bool loading = false;
   //int amount = 0;
 
   
@@ -103,26 +95,14 @@ List<NFT> allNFTs = [];
     return result;
   }
   
-  Future<void> getNFTlist() async {
-    try {
-      List<dynamic> result = await widget.model.query("getAllNFTs", []);
-      setState(() {
-        print('result length: ${result[0].length}');
-        for (int i =0; i< result[0].length; i++){
-          widget.model.allNfts.add(NFT.fromJsonList(result[0][i]));
-        }
-      });
-    } catch (error) {
-      print("Error fetching NFT list: $error");
-    }
-  }
+  
 
   Future<void> getMyNFTlist() async {
    try{
       EthereumAddress args = EthereumAddress.fromHex(widget.model.myAddress);
       List<dynamic> result = await widget.model.query("getMyNFTs", [args]);
       setState(() {
-        for (int i =0; i< result.length; i++){
+        for (int i = 0; i < result[0].length; i++){
           widget.model.myNfts.add(NFT.fromJsonList(result[0][i]));
         }
       });
@@ -164,7 +144,7 @@ List<NFT> allNFTs = [];
   }
 
   Future<void> refreshData(String targetAddress) async {
-    await getNFTlist();
+    await widget.model.getNFTlist();
     //await getNFT(BigInt.one);
     await getCounter();
     await getTester();
@@ -178,12 +158,13 @@ List<NFT> allNFTs = [];
     widget.model.initState(context);
     widget.model.initializeContract();
     ethClient = widget.model.getEthClient();
-    //widget.model.initializeMyaddress(widget.model.tempAddress);
+    //widget.model.initializeMyaddress();
     //fetch data from nft.dart and put it in allNFTs
     getTester();   
-    getNFTlist();
+    widget.model.getNFTlist();
     //allNFTs = getMyNFTlist() as List<NFT>;
     getNFT(BigInt.one);
+    getMyNFTlist();
     //fetchData();
     getCounter();  
   }
@@ -198,7 +179,7 @@ List<NFT> allNFTs = [];
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.indigoAccent,
@@ -323,28 +304,32 @@ List<NFT> allNFTs = [];
             Text('widget.model.allNfts.length ${widget.model.myNfts.length}'),
             
             Text('list:'),
+
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: ListView.builder(
-                // GridView.builder(
-                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                //     crossAxisCount: 2, // Adjust the cross axis count as needed
-                //     crossAxisSpacing: 4, // Adjust the spacing between grid items
-                //     mainAxisSpacing: 4, // Adjust the spacing between rows
-                //   ),
                   itemCount: widget.model.allNfts.length,
-                 // itemCount: widget.model.myNfts.length,
                   itemBuilder: (context, index) => productCard(
                     imageUrl: widget.model.allNfts[index].imageUrl,
                     productName: widget.model.allNfts[index].name,
-                    price: widget.model.allNfts[index].price.toString(),
+                    price: widget.model.allNfts[index].price,
                     id: widget.model.allNfts[index].tokenId,
                     context: context,
-                    // imageUrl: widget.model.myNfts[index].imageUrl,
-                    // productName: widget.model.myNfts[index].name,
-                    // price: "\$${widget.model.myNfts[index].price.toString()}",
-                    // id: widget.model.myNfts[index].tokenId,
+                    onPressed: (){
+                      try{
+                        widget.model.currentNftId = int.parse(widget.model.allNfts[index].tokenId.toString());
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => InfoPageWidget(),
+                          ),
+                        );
+                        print("button pushed");
+                      }catch(e){
+                        print("navigating to info $e");
+                      }
+                    },
                   ),
                 )
               )
@@ -356,5 +341,6 @@ List<NFT> allNFTs = [];
       ),
       bottomNavigationBar: NavBar()
     );
+    
   }
 }
