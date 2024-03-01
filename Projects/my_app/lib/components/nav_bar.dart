@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/statistic_page.dart';
+import '../pages/settings_page.dart';
 import '../pages/home_page.dart';
+import '../pages/createNFT_page.dart';
+import '../models/home_page_model.dart';
+import '../pages/user_page.dart';
 
-class NavBarModel extends NavBarWidget {
-  void initState(BuildContext context) {}
+class NavBar extends StatefulWidget {
+  HomePageModel model = HomePageModel();
+
+  NavBar({Key? key}) : super(key: key);
+  
+  void initState(BuildContext context) {
+    model.initState(context);
+    model.initializeContract();
+  }
 
   void dispose() {}
-}
-
-class NavBarWidget extends StatefulWidget {
-  const NavBarWidget({super.key});
-
+  
   @override
-  _NavBarWidgetState createState() => _NavBarWidgetState();
+  _NavBarState createState() => _NavBarState();
 }
 
-class _NavBarWidgetState extends State<NavBarWidget> {
+class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +38,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Material(
-                color: Colors.transparent,
+                //color: Colors.transparent,
                 elevation: 0,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
@@ -68,20 +76,27 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               buildIconButton(Icons.home_rounded, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePageWidget()),
+                  MaterialPageRoute(builder: (context) => HomePageWidget()),
                 );
               }),
-              buildIconButton(Icons.chat_bubble_rounded, () {
-                // TODO: Implement chat functionality
+              buildIconButton(Icons.align_vertical_bottom_outlined, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StatisticPageWidget()),
+                );
               }),
-              buildAddButton(() {
-                // TODO: Implement add functionality
-              }),
+              buildAddButton(() {}),
               buildIconButton(Icons.person, () {
-                // TODO: Implement user profile functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserPageWidget()),
+                );
               }),
               buildIconButton(Icons.settings_sharp, () {
-                // TODO: Implement settings functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPageWidget()),
+                );
               }),
             ],
           ),
@@ -98,43 +113,31 @@ class _NavBarWidgetState extends State<NavBarWidget> {
         color: Color(0xFF9299A1),
         size: 24,
       ),
-      style: ButtonStyle(
-        fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 1)),
-      ),
     );
   }
 
   Widget buildAddButton(VoidCallback onPressed) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 30,
-            ),
-            style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all<Size>(const Size(60, 60)),
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0x4b39ef)),
-              shape: MaterialStateProperty.all<CircleBorder>(CircleBorder(eccentricity: 1)),
-            ),
-          ),
-        ),
-      ],
-    );
+    return IconButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.indigoAccent), 
+      ),
+      icon: const Icon(
+        Icons.add,
+        color: Colors.white,
+        size: 30,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CreatePageWidget()),
+        );
+      },
+    );  
   }
 }
 
-class CustomNavBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return NavBarWidget(); // Use the NavBarWidget directly
-  }
-}
+
+
+
+
+

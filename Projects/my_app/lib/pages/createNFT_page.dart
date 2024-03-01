@@ -1,6 +1,7 @@
 import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import '../components/NFT.dart';
 import '../components/nav_bar.dart';
 import '../models/home_page_model.dart';
@@ -10,34 +11,44 @@ class CreatePageWidget extends StatefulWidget {
   const CreatePageWidget({super.key});
 
   @override
-  State<CreatePageWidget> createState() => _CreatePageState(allNfts: []);
+  State<CreatePageWidget> createState() => _CreatePageState();
 }
 
 class _CreatePageState extends State<CreatePageWidget> {
-  late HomePageModel _model;
-  final List<NFT> allNfts;
-  late int tokenId, price;
-  late String name, imageUrl;
-  bool loading = false;
+  HomePageModel _model = HomePageModel();
+  late BigInt tokenId, price;
+  late String name, description, imageUrl;
   TextEditingController controllerPrice = TextEditingController();
   TextEditingController controllerName = TextEditingController();
   TextEditingController controllerImageUrl = TextEditingController();
   TextEditingController controllerDescription = TextEditingController();
 
+  _CreatePageState();
 
-  _CreatePageState({required this.allNfts});
-  
-//logout function
+
   void _logout() {
     _model.logout();
+  }
+
+  Future<void> createNFT(String name, String description, String imageUrl, BigInt price) async {
+    try {
+      List<dynamic> args = [name, description, imageUrl, price];
+      String result = await _model.transaction("mint", args);
+      print("NFT created: $result");
+      setState(() { 
+          tokenId = result as BigInt;
+      });
+    } catch (error) {
+      print("Error creating NFT: $error");
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _model = HomePageModel();
-    _model.initializeContract();
     _model.initState(context);
+    _model.initializeContract();
+    tokenId = BigInt.zero;
   }
 
   @override
@@ -60,7 +71,7 @@ class _CreatePageState extends State<CreatePageWidget> {
         ),
       ),
       body:  Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -107,27 +118,27 @@ class _CreatePageState extends State<CreatePageWidget> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Logic for saving the created NFT
-                String NFTname = controllerName.text;
-                String imageUrl = controllerImageUrl.text;
-                String description = controllerDescription.text;
-                BigInt price = BigInt.parse(controllerPrice.text);
-                _model.mintNFT(NFTname, description, imageUrl, price);
+                name = controllerName.text;
+                imageUrl = controllerImageUrl.text;
+                description = controllerDescription.text;
+                price = BigInt.parse(controllerPrice.text);
+                createNFT(name, description, imageUrl, price);
+                NFT newNft = NFT(
+                  tokenId: tokenId, name: name, description: description, 
+                  imageUrl: imageUrl, price: price, 
+                  owner: EthereumAddress.fromHex(_model.myAddress)
+                );
+                _model.myNfts.add(newNft);
+                _model.allNfts.add(newNft);
               }, 
-              child: null,
+              child: const Text('Save'),
             ),
             Spacer(flex: 2),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Logic for saving the created NFT
-
-        },
-        child: Icon(Icons.save),
-      ),
-      bottomNavigationBar: CustomNavBar(),
+      
+      bottomNavigationBar: NavBar(),
 
     );
   }

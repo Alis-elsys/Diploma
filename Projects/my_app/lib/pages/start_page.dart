@@ -1,13 +1,11 @@
-
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
-//import 'package:flutter_web3/flutter_web3.dart';
 import 'package:my_app/widgets/session_widget.dart';
 import 'package:my_app/utils/dart_defines.dart';
 import 'package:my_app/utils/string_constants.dart';
 import '../models/home_page_model.dart';
-
 
 
 class StartPage extends StatefulWidget {
@@ -21,37 +19,42 @@ class StartPage extends StatefulWidget {
 
   @override
   State<StartPage> createState() => _StartPageState();
+
+  void disconnect() {
+    //use a function from the _StartPageState
+    _StartPageState()._w3mService.disconnect();
+  }
 }
 
 class _StartPageState extends State<StartPage> {
   late W3MService _w3mService;
   bool _initialized = false;
+
   final HomePageModel model = HomePageModel();
   String currentAddress = '';
   int currentChain = 0;
   @override
   void initState() {
     super.initState();
-    
+
     if (_initialized) {
-      _w3mService.disconnect();
       _initialized = false;
     }
     _initializeService();
+    _w3mService.disconnect();
+
     model.initState(context);
   }
 
   void _initializeService() async {
-    //if already initialized, return and navigate to home page
-
     W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: const PairingMetadata(
-        name: StringConstants.w3mPageTitleV3,
-        description: StringConstants.w3mPageTitleV3,
+        name: StringConstants.startPageTitle,
+        description: StringConstants.startPageTitle,
         url: 'https://www.walletconnect.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
@@ -66,7 +69,6 @@ class _StartPageState extends State<StartPage> {
     _w3mService.web3App?.onSessionEvent.subscribe(_onSessionEvent);
     _w3mService.web3App?.onSessionConnect.subscribe(_onSessionConnect);
     _w3mService.web3App?.onSessionDelete.subscribe(_onSessionDelete);
-
     setState(() => _initialized = true);
   }
 
@@ -76,6 +78,10 @@ class _StartPageState extends State<StartPage> {
     _w3mService.web3App?.onSessionConnect.unsubscribe(_onSessionConnect);
     _w3mService.web3App?.onSessionDelete.unsubscribe(_onSessionDelete);
     super.dispose();
+  }
+
+  void disconnect() {
+    _w3mService.disconnect();
   }
 
   void _serviceListener() {
@@ -88,14 +94,14 @@ class _StartPageState extends State<StartPage> {
 
   void _onSessionConnect(SessionConnect? args) {
     debugPrint('[$runtimeType] _onSessionConnect $args');
-    if (mounted) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePageWidget(),
-      ),
-    );
-  }
+    if(mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePageWidget(),
+        ),
+      );
+    } 
   }
 
   void _onSessionDelete(SessionDelete? args) {
@@ -106,11 +112,12 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
     final isCircular = Web3ModalTheme.radiusesOf(context).isCircular();
+    //_w3mService.disconnect();
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text(StringConstants.w3mPageTitleV3),
+        title: const Text(StringConstants.startPageTitle),
         backgroundColor: Web3ModalTheme.colorsOf(context).background100,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
@@ -184,14 +191,12 @@ class _ConnectedView extends StatelessWidget {
     if (!w3mService.isConnected) {
       return const SizedBox.shrink();
     }else{
-      model.initializeMyaddress(w3mService);
+      model.tempAddress = w3mService.address;
+      model.balance = w3mService.chainBalance;
     }
-    
-    Text("Connected Wallet: ${w3mService.selectedWallet}");    
-    Text('Connected Chain: ${w3mService.address}');
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (w3mService.isConnected) {
+      if(w3mService.isConnected) {
         Navigator.push(
           context,
           MaterialPageRoute(

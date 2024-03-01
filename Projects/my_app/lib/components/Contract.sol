@@ -16,7 +16,7 @@ contract Shop is ERC721URIStorage{
         string name;
         string description;
         string imageUrl; 
-        int price;
+        uint price;
         address payable NFTowner;
     }
 
@@ -26,13 +26,13 @@ contract Shop is ERC721URIStorage{
     mapping(address => uint256) public userSoldCounts;
 
 
-    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, int price);
-    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, int price);
+    event TokenMinted(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
+    event TokenBought(uint256 indexed tokenId, address indexed owner, string name, string description, string imageUrl, uint price);
 
     constructor() ERC721("Shop", "SHOP"){
     }
 
-    function mint(string memory name, string memory description, string memory imageUrl, int price) 
+    function mint(string memory name, string memory description, string memory imageUrl, uint price) 
     external returns(uint256){
         uint256 tokenId = NFTsIds.current();
 
@@ -109,20 +109,24 @@ contract Shop is ERC721URIStorage{
         return allNFTsArray;
     }
 
-    function getMyNFTs() public view returns(NFT[] memory){
-        return myNFTs[msg.sender];
+    function getMyNFTs(address sender) public view returns(NFT[] memory){
+        NFT[] memory temp = myNFTs[sender];
+        return temp;
     }
-
     function getLenght(address sender) public view returns (uint){
         uint i = myNFTs[sender].length;
         return i;
     }
-
     function getCounter() public view returns (uint){
         return NFTsCounter.current();
     }
-
     function getIds() public view returns (uint){
         return NFTsIds.current();
+    }
+    function getSoldCount()public view returns (uint){
+        return userSoldCounts[msg.sender];
+    }
+    function getBoughtCount()public view returns (uint){
+        return userBoughtCounts[msg.sender];
     }
 }

@@ -5,15 +5,15 @@ import 'package:provider/provider.dart';
 import '/models/home_page_model.dart';
 import 'package:expandable/expandable.dart';
 
-class InfoPageWidget extends StatefulWidget {
-  InfoPageWidget({super.key});
+class MyPageWidget extends StatefulWidget {
+  MyPageWidget({super.key});
   late HomePageModel _model;
 
   @override
-  State<InfoPageWidget> createState() => _InfoPageWidgetState();
+  State<MyPageWidget> createState() => _MyPageWidgetState();
 }
 
-class _InfoPageWidgetState extends State<InfoPageWidget> {
+class _MyPageWidgetState extends State<MyPageWidget> {
   String NFTname = '';
   String NFTimage = '';
   String NFTcreator = '';
@@ -39,20 +39,18 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
     widget._model.initializeContract();
 
     await widget._model.getNFTlist();
-    print('currentNftId: ${widget._model.currentNftId}');
+ 
     nftId = widget._model.currentNftId as int;
-    NFTname = widget._model.allNfts[nftId].name;
-    NFTprice = widget._model.allNfts[nftId].price;
-    NFTcreator = widget._model.allNfts[nftId].owner.toString();
-    NFTdescription = widget._model.allNfts[nftId].description;
+    NFTname = widget._model.myNfts[nftId].name;
+    NFTprice = widget._model.myNfts[nftId].price;
+    NFTcreator = widget._model.myNfts[nftId].owner.toString();
+    NFTdescription = widget._model.myNfts[nftId].description;
   }
 
-
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     initModel();
-   
   }
 
   @override
@@ -148,15 +146,16 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
                             Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-                              child: Text(
-                                'creator $NFTcreator',
-                                style:const TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF57636C),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                              ),
+                              child: 
+                                Text(
+                                  'URI of the token: $NFTimage',
+                                  style:const TextStyle(
+                                    fontFamily: 'Plus Jakarta Sans',
+                                    color: Color.fromARGB(255, 66, 75, 82),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                             ),
                           ],
                         ),
@@ -300,44 +299,6 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 12),
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Color(0x33000000),
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4B39EF), Color(0x4C4B39EF)],
-                      stops: [0, 1],
-                      begin: AlignmentDirectional(-1, 0),
-                      end: AlignmentDirectional(1, 0),
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: AlignmentDirectional(0, 0),
-                  child: TextButton(
-                    onPressed: () {
-                      buyNft(0);
-                    },
-                    child: const Text(
-                      'Buy',
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
                   ),
                 ),
               ),

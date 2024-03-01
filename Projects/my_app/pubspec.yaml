@@ -28,6 +28,8 @@ dependencies:
   image_network: ^2.5.4+1
   web3modal_flutter: ^3.0.1
   fl_toast: ^3.2.0
+  syncfusion_flutter_charts: ^24.2.8
+
 
 
 dev_dependencies:

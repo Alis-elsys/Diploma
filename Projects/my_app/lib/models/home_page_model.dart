@@ -24,12 +24,12 @@ class HomePageModel extends HomePageWidget {
   ExpandableController? isExpanded;
   String? Function(BuildContext, String?)? textControllerValidator;
   // Model for NavBar1 component.
-  late CustomNavBar navBarModel;
+  late NavBar navBarModel;
   List<NFT> allNfts = [];
+  List<NFT> myNfts = [];  
   late http.Client _httpClient;
     late Web3Client _ethClient;
     late DeployedContract _contract;
-    late EthereumAddress address;
     final String blockchainUrl =
       "https://sepolia.infura.io/v3/7f0484b1a988417e9be1706dd241a9fd"; //Endpoint for the blockchain
     final String apiKey = "FdTLCM20fELyB/28wtHUxbnRuicnICMQl1tC2ejUQzWUuYh2vGabFQ";
@@ -37,13 +37,13 @@ class HomePageModel extends HomePageWidget {
     late String contractAddress;
     String privateKey =
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
-    late String myAddress;  
-    //"0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String myAddress = /*"0x0000000000000000000000000000000000000000";*/ "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
+    String? tempAddress = '';
     late int currentNftId;
     late List<dynamic> data;
+    double? balance = 0; 
 
     HomePageModel();
-
 
 
 
@@ -57,16 +57,16 @@ class HomePageModel extends HomePageWidget {
       }
       return null;
     };
+    
+    currentNftId = -1;
 
-    navBarModel = CustomNavBar();
+    navBarModel = NavBar();
   }
 
-  Future<void> initializeMyaddress(W3MService _w3mService) async {
-    String? address = _w3mService.address;
-    if (address != null) {
-     myAddress = address;
+  Future<void> initializeMyaddress() async {
+    if (tempAddress != null) {
+     myAddress = tempAddress.toString(); 
     }
-    print("My address: ${_w3mService.address}");
   }
 
   Future<void> initializeContract() async {
@@ -98,14 +98,14 @@ class HomePageModel extends HomePageWidget {
 
   Future<DeployedContract> getContract() async {
     String abi = await rootBundle.loadString("assets/abi.json");
-    String contractAddress = "0x6E08b9F5A87A17e2F5656a593Ed3E98A918BA579";
+    String contractAddress = "0x049c364eEB80280b800D12DeF9a729E5bFD44560";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(contractAddress));
 
     return contract;
   }
-//! transaction ili transaction.callcontract
+
   Future<String> transaction(String functionName, List<dynamic> args) async {
     EthPrivateKey credential = EthPrivateKey.fromHex(privateKey);
     DeployedContract contract = await getContract();
@@ -136,7 +136,6 @@ class HomePageModel extends HomePageWidget {
     List<dynamic> result = await query("mintNFT()", [name, description, imageUrl, price]);
     BigInt tokenId  = result[0];
 
-    //add NFT to the list
     allNfts.add(NFT(
       tokenId: tokenId,
       name: name,
@@ -147,42 +146,33 @@ class HomePageModel extends HomePageWidget {
     ));
   }
 
-  Future<List<NFT>> getAllNFTs() async {
-    List<dynamic> result = await query("getAllNFTs()", []);
-    List<NFT> nfts = [];
-    for (int i = 0; i < result.length; i++) {
-      List<dynamic> nft = result[i];
-      nfts.add(NFT(
-        tokenId: nft[0],
-        name: nft[1],
-        description: nft[2],
-        imageUrl: nft[3],
-        price: nft[4],
-        owner: nft[5]
-      ));
+  Future<void> buyNFT(BigInt tokenId) async {
+    await transaction("buyNFT", [tokenId]);
+  }
+  
+  Future<void> getNFTlist() async {
+    try {
+      List<dynamic> result = await query("getAllNFTs", []);
+      print('result length: ${result[0].length}');
+     // allNfts.clear();
+      for (int i = 0; i < result[0].length; i++){
+        allNfts.add(NFT.fromJsonList(result[0][i])); 
+      };
+      print('all: ${allNfts.length}');
+    } catch (error) {
+      print("Error fetching NFT list: $error");
     }
-    return nfts;
   }
 
-  //logout function
+  
   void logout() {
-    //logout of the wallet account and go back to start hage
-  
 
   }
-
-  
-
 
   void dispose() {
     textFieldFocusNode?.dispose();
     textController?.dispose();
     //navBarModel.dispose();
   }
-
-
-  /// Action blocks are added here.
-
-  /// Additional helper methods are added here.
   
 }

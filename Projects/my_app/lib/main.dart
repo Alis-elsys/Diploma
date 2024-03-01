@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       themeData: _themeData,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: StringConstants.w3mPageTitleV3,
+        title: StringConstants.startPageTitle,
         home: StartPage(
           swapTheme: () => _swapTheme(),
           changeTheme: () => _changeTheme(),
