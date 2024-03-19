@@ -6,7 +6,8 @@ import '/models/home_page_model.dart';
 import 'package:expandable/expandable.dart';
 
 class MyPageWidget extends StatefulWidget {
-  MyPageWidget({super.key});
+  final int current;
+  MyPageWidget({super.key, required this.current});
   late HomePageModel _model;
 
   @override
@@ -14,15 +15,12 @@ class MyPageWidget extends StatefulWidget {
 }
 
 class _MyPageWidgetState extends State<MyPageWidget> {
-  String NFTname = 'WORKING';
-  // ignore: non_constant_identifier_names
-  String NFTimage = "https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?jpegSize=300&wid=1000";
-  String NFTcreator = '0x5e5386c139c5a9f9d99a743ff10647b140ab543c';
-  String NFTdescription = 'an image';
-  BigInt NFTprice = BigInt.from(1111);
-
-  int nftId = 0;
-
+  late String NFTname;
+  late String NFTimage;
+  late String NFTcreator;
+  late String NFTdescription;
+  late BigInt NFTprice;
+  
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
 
@@ -40,25 +38,26 @@ class _MyPageWidgetState extends State<MyPageWidget> {
     widget._model.initializeContract();
 
     await widget._model.getNFTlist();
-    print('currentNftId: ${widget._model.currentNftId}');
-    //check if widget._model.allNfts[0] is empty
-   // if (widget._model.allNfts[0] )
-    print('model0 ${widget._model.allNfts[0]}');
-    //nftId = widget._model.currentNftId as int;
-    print('nftId $nftId');
-    // NFTname = widget._model.allNfts[nftId].name;
-    // NFTprice = widget._model.allNfts[nftId].price;
-    // NFTcreator = widget._model.allNfts[nftId].owner.toString();
-    // NFTdescription = widget._model.allNfts[nftId].description;
 
-    }
+    setState(() {
+      NFTname = widget._model.allNfts[widget.current].name;
+      NFTimage = widget._model.allNfts[widget.current].imageUrl;
+      NFTprice = widget._model.allNfts[widget.current].price;
+      NFTcreator = widget._model.allNfts[widget.current].owner.toString();
+      NFTdescription = widget._model.allNfts[widget.current].description;
+    });
+  }
 
 
   @override
   void initState()  {
     super.initState();
-    initModel();
-   
+    NFTname = '';
+    NFTimage = '';
+    NFTcreator = '';
+    NFTdescription = '';
+    NFTprice = BigInt.from(0);
+    initModel();   
   }
 
   @override
@@ -126,26 +125,13 @@ class _MyPageWidgetState extends State<MyPageWidget> {
                                   EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                               child: Container(
                                 width: double.infinity,
-                                height: 230,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFE0E3E7),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      blurRadius: 12,
-                                      color: Color(0x33000000),
-                                      offset: Offset(0, 5),
-                                    )
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                height: 310,
                                 child: Padding(
                                   padding: EdgeInsets.all(2),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       NFTimage,
-                                      width: double.infinity,
-                                      height: 230,
                                       fit: BoxFit.cover,
                                     ),
                                   ),

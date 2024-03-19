@@ -6,7 +6,8 @@ import '/models/home_page_model.dart';
 import 'package:expandable/expandable.dart';
 
 class InfoPageWidget extends StatefulWidget {
-  InfoPageWidget({super.key});
+  final int currentNftId;
+  InfoPageWidget({super.key, required this.currentNftId});
   late HomePageModel _model;
 
   @override
@@ -14,17 +15,17 @@ class InfoPageWidget extends StatefulWidget {
 }
 
 class _InfoPageWidgetState extends State<InfoPageWidget> {
-  String NFTname = 'WORKING';
+  //get access to the current NFT required in the stateful widget
+  late String NFTname;
   // ignore: non_constant_identifier_names
-  String NFTimage = "https://cc-prod.scene7.com/is/image/CCProdAuthor/adobe-firefly-marquee-text-to-image-0-desktop-1000x1000?jpegSize=300&wid=1000";
-  String NFTcreator = '0x5e5386c139c5a9f9d99a743ff10647b140ab543c';
-  String NFTdescription = 'an image';
-  BigInt NFTprice = BigInt.from(1111);
-
-  int nftId = 0;
+  late String NFTimage;
+  late String NFTcreator;
+  late String NFTdescription;
+  late BigInt NFTprice;
+  
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
+  
 
   Future<void> buyNft(int tokenId) async {
     try {
@@ -40,25 +41,32 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
     widget._model.initializeContract();
 
     await widget._model.getNFTlist();
-    print('currentNftId: ${widget._model.currentNftId}');
+    print('currentNftId: ${widget.currentNftId}');
     //check if widget._model.allNfts[0] is empty
-   // if (widget._model.allNfts[0] )
-    print('model0 ${widget._model.allNfts[0]}');
-    //nftId = widget._model.currentNftId as int;
-    print('nftId $nftId');
-    // NFTname = widget._model.allNfts[nftId].name;
-    // NFTprice = widget._model.allNfts[nftId].price;
-    // NFTcreator = widget._model.allNfts[nftId].owner.toString();
-    // NFTdescription = widget._model.allNfts[nftId].description;
+   //if (widget._model.allNfts[0] == null)
+      print('model0 ${widget._model.allNfts[widget.currentNftId].owner}');
 
+    
+      setState(() {
+        NFTname = widget._model.allNfts[widget.currentNftId].name;
+        NFTimage = widget._model.allNfts[widget.currentNftId].imageUrl;
+        NFTprice = widget._model.allNfts[widget.currentNftId].price;
+        NFTcreator = widget._model.allNfts[widget.currentNftId].owner.toString();
+        NFTdescription = widget._model.allNfts[widget.currentNftId].description;
+      
+      });
     }
 
 
   @override
   void initState()  {
     super.initState();
+    NFTname = '';
+    NFTimage = '';
+    NFTcreator = '';
+    NFTdescription = '';
+    NFTprice = BigInt.from(0);
     initModel();
-   
   }
 
   @override
@@ -126,27 +134,13 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
                                   EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                               child: Container(
                                 width: double.infinity,
-                                height: 230,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFE0E3E7),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      blurRadius: 12,
-                                      color: Color(0x33000000),
-                                      offset: Offset(0, 5),
-                                    )
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                height: 310,
                                 child: Padding(
                                   padding: EdgeInsets.all(2),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       NFTimage,
-                                      width: double.infinity,
-                                      height: 230,
-                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
