@@ -39,7 +39,6 @@ class HomePageModel extends HomePageWidget {
     "5e0b7dd43a57934770bb8e7d563d26cc94f4c9cb4ec04c72e20cf1bee4cd66c3";
     String myAddress = /*"0x0000000000000000000000000000000000000000";*/ "0x5e5386C139c5A9F9d99a743Ff10647b140AB543c";
     String? tempAddress = '';
-    late int currentNftId;
     late List<dynamic> data;
     double? balance = 0; 
 
@@ -60,10 +59,11 @@ class HomePageModel extends HomePageWidget {
       }
       return null;
     };
-    
-    currentNftId = -1;
     //Create navBarModel 
     navBarModel = NavBar();
+   // getMyNFTlist();
+    //getNFTlist();
+    //initializeMyaddress();
   }
 
   Future<void> initializeMyaddress() async {
@@ -153,14 +153,28 @@ class HomePageModel extends HomePageWidget {
   }
 
   Future<void> buyNFT(BigInt tokenId) async {
-    await transaction("buyNFT", [tokenId]);
+    try{
+      if (allNfts.isNotEmpty) {
+        print('Empty list: ${allNfts.first.name}');
+      }
+      await transaction("buyNFT", []);
+      //update the owner of the NFT
+      for (int i = 0; i < allNfts.length; i++){
+        if (allNfts[i].tokenId == tokenId){
+          allNfts[i].owner = EthereumAddress.fromHex(myAddress);
+          break;
+        }
+    }
+    } catch (error) {
+      print("Error in home buying NFT: $error");
+    }
   }
   
   Future<void> getNFTlist() async {
     try {
       List<dynamic> result = await query("getAllNFTs", []);
       print('result length: ${result[0].length}');
-     // allNfts.clear();
+      allNfts.clear();
       for (int i = 0; i < result[0].length; i++){
         allNfts.add(NFT.fromJsonList(result[0][i])); 
       };
@@ -170,6 +184,20 @@ class HomePageModel extends HomePageWidget {
     }
   }
 
+  Future<void> getMyNFTlist() async {
+    try {
+      EthereumAddress args = EthereumAddress.fromHex(myAddress);
+      List<dynamic> result = await query("getMyNFTs", [args]);
+      print('result length: ${result[0].length}');
+      myNfts.clear();
+      for (int i = 0; i < result[0].length; i++){
+        myNfts.add(NFT.fromJsonList(result[0][i])); 
+      };
+      print('my: ${myNfts.length}');
+    } catch (error) {
+      print("Error fetching myNFT list: $error");
+    }
+  }
   
   //logout function
   void logout() {

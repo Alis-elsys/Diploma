@@ -132,7 +132,7 @@ class _MyPageWidgetState extends State<MyPageWidget> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       NFTimage,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),

@@ -11,7 +11,7 @@ final HomePageModel _model = HomePageModel();
 class NFT {
   final BigInt tokenId, price;
   final String name, description, imageUrl;
-  final EthereumAddress owner;
+  late final EthereumAddress owner;
   late List<NFT> allNfts;
   // Add other attributes as needed
 

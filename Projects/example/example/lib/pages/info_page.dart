@@ -29,7 +29,8 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
 
   Future<void> buyNft(int tokenId) async {
     try {
-      await widget._model.transaction('mint', []);
+      await widget._model.buyNFT(BigInt.from(tokenId));
+      print('NFT bought');
     } catch (e) {
       print("Error buying NFT: $e");
     }
@@ -141,6 +142,7 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       NFTimage,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),
@@ -328,7 +330,7 @@ class _InfoPageWidgetState extends State<InfoPageWidget> {
                   alignment: AlignmentDirectional(0, 0),
                   child: TextButton(
                     onPressed: () {
-                      buyNft(0);
+                      buyNft(widget.currentNftId);
                     },
                     child: const Text(
                       'Buy',

@@ -318,11 +318,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     context: context,
                     onPressed: (){
                       try{
-                        widget.model.currentNftId = int.parse(widget.model.allNfts[index].tokenId.toString());
+                        int currentNftId = int.parse(widget.model.allNfts[index].tokenId.toString());
+                        print("NFT id if the clicked : ${currentNftId}");
                         Navigator.push(
                           context, 
                           MaterialPageRoute(
-                            builder: (context) => InfoPageWidget(),
+                            builder: (context) => InfoPageWidget(currentNftId: currentNftId),
                           ),
                         );
                         print("button pushed");
